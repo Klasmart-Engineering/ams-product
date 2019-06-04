@@ -1,0 +1,8 @@
+{
+    "tokens": {
+        "accessToken": {
+            "expireMinutes": 30,
+            "secret": "661381ab48a5d3310793182b8dba53861e57e6d5aed6efe74f688da1f14bce6cf0b5b93eb109f5dfdd10210ab54be41c3f05d752526dcfb940f1a6f3c35cba83"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+image: golang
+
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          caches:
+            - gopath
+            - gomodules
+          script:
+            - git config --global url."https://${BITBUCKET_USER}:${BITBUCKET_APP_PASS}@bitbucket.org".insteadOf "https://bitbucket.org"
+            - go get ./...
+            - go vet ./...
+            - go get github.com/jstemmer/go-junit-report
+            - mkdir ./test-reports
+            - go test -v ./... 2>&1 | go-junit-report > ./test-reports/junit.xml
+definitions:
+  caches:
+    gopath: ${GOPATH}/src
+    gomodules: ${GOPATH}/pkg/mod
