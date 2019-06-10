@@ -3,31 +3,21 @@
 package main
 
 import (
-	"net/http"
-
 	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
+	"bitbucket.org/calmisland/go-server-shared/servers/restserver"
 )
-
-func handleRequest(w http.ResponseWriter, r *http.Request) {
-	err := handleHTTPRequest(w, r)
-	if err != nil {
-		panic(err)
-	}
-}
 
 func main() {
 	server.Setup()
 	initLambdaFunctions()
 	initLambdaDevFunctions()
 
-	http.HandleFunc("/", handleRequest)
-
-	httpServer := &http.Server{
-		Addr:    ":8044",
-		Handler: nil,
+	restServer := &restserver.Server{
+		ListenAddress: ":8044",
+		Handler:       rootRouter,
 	}
 
-	err := httpServer.ListenAndServe()
+	err := restServer.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}
