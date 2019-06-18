@@ -24,5 +24,9 @@ func createLambdaRouterV1() *apirequests.Router {
 	productRouter.AddMethodHandlerWildcard("GET", "productId", handlers.HandleProductInfo)
 	router.AddRouter("product", productRouter)
 
+	specificProductRouter := &apirequests.Router{}
+	specificProductRouter.AddMethodHandler("GET", "icon", handlers.HandleProductIconDownload)
+	productRouter.AddRouterWildcard("productId", specificProductRouter)
+
 	return router
 }

@@ -8,6 +8,7 @@ import (
 	"bitbucket.org/calmisland/go-server-shared/requests/apirequests"
 	"bitbucket.org/calmisland/go-server-shared/utils/timeutils"
 	"bitbucket.org/calmisland/go-server-standard/stdservices"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
 type productInfoListResponseBody struct {
@@ -91,4 +92,28 @@ func HandleProductInfo(req *apirequests.Request) (*apirequests.Response, error) 
 		UpdatedDate: productVO.UpdatedDate,
 	}
 	return apirequests.NewResponse(response)
+}
+
+// HandleProductIconDownload handles downloading product icons.
+func HandleProductIconDownload(req *apirequests.Request) (*apirequests.Response, error) {
+	if req.HTTPMethod != "GET" {
+		return apirequests.ClientError(apierrors.ErrorBadRequestMethod)
+	}
+
+	sessionData := req.ValidateRequestToken()
+	if sessionData == nil {
+		return apirequests.ClientError(apierrors.ErrorExpiredAccessToken)
+	}
+
+	productID := req.GetPathParam("productId")
+	if productID == nil {
+		return apirequests.ClientError(apierrors.ErrorInvalidParameters)
+	}
+
+	fileURL, err := services.GetProgramIconURL(*productID)
+	if err != nil {
+		return apirequests.ServerError(err)
+	}
+
+	return apirequests.NewRedirectResponse(fileURL)
 }

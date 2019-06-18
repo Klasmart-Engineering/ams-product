@@ -1,0 +1,9 @@
+{
+    "downloadBaseUrl": "https://s3.ap-northeast-2.amazonaws.com/badanamu-curriculum-dev/",
+    "signing": {
+        "aws_cloudfront": null,
+        "aws_s3": {
+            "region": "ap-northeast-2"
+        }
+    }
+}

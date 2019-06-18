@@ -1,0 +1,10 @@
+{
+    "cacheExpireMinutes": 15,
+    "downloadBaseUrl": "https://curriculum-cdn.badanamu.net/",
+    "signing": {
+        "aws_cloudfront": {
+            "keyId": "APKAIJTOKVOYQPJ37MOQ",
+            "privateKeyPath": "./keys/pk-APKAIJTOKVOYQPJ37MOQ.pem"
+        }
+    }
+}
