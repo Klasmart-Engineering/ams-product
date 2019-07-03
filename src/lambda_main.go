@@ -4,8 +4,8 @@ package main
 
 import (
 	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
-	"bitbucket.org/calmisland/go-server-shared/services/aws/awslambda"
-	"bitbucket.org/calmisland/go-server-shared/configs"
+	"bitbucket.org/calmisland/go-server-shared/v2/services/aws/awslambda"
+	"bitbucket.org/calmisland/go-server-shared/v2/configs"
 )
 
 func main() {
