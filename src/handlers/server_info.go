@@ -14,7 +14,7 @@ type serverInfoResponseBody struct {
 // HandleServerInfo handles server information requests.
 func HandleServerInfo(req *apirequests.Request) (*apirequests.Response, error) {
 	if req.HTTPMethod != "GET" {
-		return apirequests.ClientError(apierrors.ErrorBadRequestMethod)
+		return apirequests.ClientError(req, apierrors.ErrorBadRequestMethod)
 	}
 
 	serverRegionName := serverinfo.GetRegionName()

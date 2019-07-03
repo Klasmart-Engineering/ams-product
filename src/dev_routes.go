@@ -17,18 +17,18 @@ func initLambdaDevFunctions() {
 
 func createTablesRequest(req *apirequests.Request) (*apirequests.Response, error) {
 	if req.HTTPMethod != "GET" {
-		return apirequests.ClientError(apierrors.ErrorBadRequestMethod)
+		return apirequests.ClientError(req, apierrors.ErrorBadRequestMethod)
 	}
 
 	// Get the database
 	db, err := productdatabase.GetDatabase()
 	if err != nil {
-		return apirequests.ServerError(err)
+		return apirequests.ServerError(req, err)
 	}
 
 	err = db.CreateDatabaseTables()
 	if err != nil {
-		return apirequests.ServerError(err)
+		return apirequests.ServerError(req, err)
 	}
 
 	return &apirequests.Response{
