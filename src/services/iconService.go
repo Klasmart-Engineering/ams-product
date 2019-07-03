@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"time"
 
-	"bitbucket.org/calmisland/go-server-shared/requests/urlsigner"
-	"bitbucket.org/calmisland/go-server-shared/utils/urlutils"
+	"bitbucket.org/calmisland/go-server-shared/v2/requests/urlsigner"
+	"bitbucket.org/calmisland/go-server-shared/v2/utils/urlutils"
 )
 
 // GetProgramIconURL returns the URL for a specific program icon.

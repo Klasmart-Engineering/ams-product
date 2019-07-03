@@ -1,6 +1,9 @@
 package services
 
-import "bitbucket.org/calmisland/go-server-shared/configs"
+import (
+	"bitbucket.org/calmisland/go-server-shared/v2/configs"
+	"bitbucket.org/calmisland/go-server-shared/v2/errors"
+)
 
 type curriculumConfig struct {
 	CacheExpireMinutes int32     `json:"cacheExpireMinutes"`
@@ -12,15 +15,16 @@ var (
 	config curriculumConfig
 )
 
-func init() {
+// InitializeFromConfigs InitializeFromConfigs
+func InitializeFromConfigs() error {
 	err := configs.LoadConfig("product", &config, true)
 	if err != nil {
-		panic(err)
+		return errors.Wrap(err, "Failed to read the product configuration file")
 	}
 
 	if config.CacheExpireMinutes == 0 {
 		config.CacheExpireMinutes = 15
 	}
 
-	initSignedUrls()
+	return initSignedUrls()
 }

@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/apierrors"
-	"bitbucket.org/calmisland/go-server-shared/requests/apirequests"
-	"bitbucket.org/calmisland/go-server-shared/serverinfo"
+	"bitbucket.org/calmisland/go-server-shared/v2/apierrors"
+	"bitbucket.org/calmisland/go-server-shared/v2/requests/apirequests"
+	"bitbucket.org/calmisland/go-server-shared/v2/serverinfo"
 )
 
 type serverInfoResponseBody struct {

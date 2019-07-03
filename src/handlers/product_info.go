@@ -3,10 +3,10 @@ package handlers
 import (
 	"strings"
 
-	"bitbucket.org/calmisland/go-server-shared/apierrors"
-	"bitbucket.org/calmisland/go-server-shared/datareference"
-	"bitbucket.org/calmisland/go-server-shared/requests/apirequests"
-	"bitbucket.org/calmisland/go-server-shared/utils/timeutils"
+	"bitbucket.org/calmisland/go-server-shared/v2/apierrors"
+	"bitbucket.org/calmisland/go-server-shared/v2/datareference"
+	"bitbucket.org/calmisland/go-server-shared/v2/requests/apirequests"
+	"bitbucket.org/calmisland/go-server-shared/v2/utils/timeutils"
 	"bitbucket.org/calmisland/go-server-standard/stdservices"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )

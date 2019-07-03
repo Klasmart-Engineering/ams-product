@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/requests/apirequests"
+	"bitbucket.org/calmisland/go-server-shared/v2/requests/apirequests"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/handlers"
 )
 

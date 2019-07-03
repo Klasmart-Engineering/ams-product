@@ -5,8 +5,8 @@ package main
 import (
 	"bitbucket.org/calmisland/go-server-standard/databases/productdatabase"
 
-	"bitbucket.org/calmisland/go-server-shared/apierrors"
-	"bitbucket.org/calmisland/go-server-shared/requests/apirequests"
+	"bitbucket.org/calmisland/go-server-shared/v2/apierrors"
+	"bitbucket.org/calmisland/go-server-shared/v2/requests/apirequests"
 )
 
 func initLambdaDevFunctions() {

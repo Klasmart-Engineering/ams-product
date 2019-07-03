@@ -3,11 +3,16 @@
 package main
 
 import (
+	"bitbucket.org/calmisland/go-server-shared/v2/configs"
+	"bitbucket.org/calmisland/go-server-shared/v2/servers/restserver"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
-	"bitbucket.org/calmisland/go-server-shared/servers/restserver"
 )
 
 func main() {
+	err := configs.UpdateConfigDirectoryPath(configs.DefaultConfigFolderName)
+	if err != nil {
+		panic(err)
+	}
 	server.Setup()
 	initLambdaFunctions()
 	initLambdaDevFunctions()
@@ -17,7 +22,7 @@ func main() {
 		Handler:       rootRouter,
 	}
 
-	err := restServer.ListenAndServe()
+	err = restServer.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}

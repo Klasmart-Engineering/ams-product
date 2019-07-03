@@ -4,10 +4,10 @@ import (
 	"crypto/rsa"
 	"strings"
 
-	"bitbucket.org/calmisland/go-server-shared/errors"
-	"bitbucket.org/calmisland/go-server-shared/requests/urlsigner"
-	"bitbucket.org/calmisland/go-server-shared/services/aws/awscloudfront"
-	"bitbucket.org/calmisland/go-server-shared/services/aws/awss3"
+	"bitbucket.org/calmisland/go-server-shared/v2/errors"
+	"bitbucket.org/calmisland/go-server-shared/v2/requests/urlsigner"
+	"bitbucket.org/calmisland/go-server-shared/v2/services/aws/awscloudfront"
+	"bitbucket.org/calmisland/go-server-shared/v2/services/aws/awss3"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 )
@@ -31,21 +31,22 @@ var (
 	urlSigner urlsigner.Signer
 )
 
-func initSignedUrls() {
+func initSignedUrls() error {
 	if config.Signing == nil {
-		return
+		return nil
 	}
 
 	if config.Signing.AWSCloudFront != nil {
-		setupAWSCloudFrontSigning(config.Signing.AWSCloudFront)
+		return setupAWSCloudFrontSigning(config.Signing.AWSCloudFront)
 	} else if config.Signing.AWSS3 != nil {
-		setupAWSS3Signing(config.Signing.AWSS3)
+		return setupAWSS3Signing(config.Signing.AWSS3)
 	}
+	return nil
 }
 
-func setupAWSCloudFrontSigning(signInfo *signInfoAWSCloudFront) {
+func setupAWSCloudFrontSigning(signInfo *signInfoAWSCloudFront) error {
 	if len(signInfo.KeyID) == 0 {
-		panic(errors.New("Missing AWS CloudFront key ID for product URL signing"))
+		return errors.New("Missing AWS CloudFront key ID for product URL signing")
 	}
 
 	var privateKey *rsa.PrivateKey
@@ -55,31 +56,33 @@ func setupAWSCloudFrontSigning(signInfo *signInfoAWSCloudFront) {
 	} else if len(signInfo.PrivateKeyPath) > 0 {
 		privateKey, err = awscloudfront.LoadPEMPrivKeyFile(signInfo.PrivateKeyPath)
 	} else {
-		panic(errors.New("Missing AWS CloudFront private key for product URL signing"))
+		return errors.New("Missing AWS CloudFront private key for product URL signing")
 	}
 
 	if err != nil {
-		panic(errors.Wrap(err, "Failed to load the private key"))
+		return errors.Wrap(err, "Failed to load the private key")
 	} else if privateKey == nil {
-		panic(errors.New("Failed to load the private key"))
+		return errors.New("Failed to load the private key")
 	}
 
 	urlSigner = awscloudfront.NewURLSigner(signInfo.KeyID, privateKey)
+	return nil
 }
 
-func setupAWSS3Signing(signInfo *signInfoAWSS3) {
+func setupAWSS3Signing(signInfo *signInfoAWSS3) error {
 	if len(signInfo.Region) == 0 {
-		panic(errors.New("Missing AWS S3 region for product URL signing"))
+		return errors.New("Missing AWS S3 region for product URL signing")
 	}
 
 	session, err := session.NewSession(&aws.Config{
 		Region: aws.String(signInfo.Region),
 	})
 	if err != nil {
-		panic(errors.Wrap(err, "Failed to create a new AWS session"))
+		return errors.Wrap(err, "Failed to create a new AWS session")
 	}
 
 	urlSigner = awss3.NewURLSigner(session)
+	return nil
 }
 
 func signURL(url string, options urlsigner.SignOptions) (string, error) {
