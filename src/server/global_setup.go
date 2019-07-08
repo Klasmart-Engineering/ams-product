@@ -3,12 +3,12 @@
 package server
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/v2/configs"
-	"bitbucket.org/calmisland/go-server-shared/v2/errors/errorreporter"
-	"bitbucket.org/calmisland/go-server-shared/v2/errors/errorreporter/slackreporter"
-	"bitbucket.org/calmisland/go-server-shared/v2/security"
-	"bitbucket.org/calmisland/go-server-shared/v2/services/aws/awsdynamodb"
-	"bitbucket.org/calmisland/go-server-standard/databases/productdatabase/productdynamodb"
+	"bitbucket.org/calmisland/go-server-shared/v3/configs"
+	"bitbucket.org/calmisland/go-server-shared/v3/errors/errorreporter"
+	"bitbucket.org/calmisland/go-server-shared/v3/errors/errorreporter/slackreporter"
+	"bitbucket.org/calmisland/go-server-shared/v3/security"
+	"bitbucket.org/calmisland/go-server-aws/awsdynamodb"
+	"bitbucket.org/calmisland/go-server-product/productdatabase/productdynamodb"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 

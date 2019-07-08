@@ -4,10 +4,10 @@ import (
 	"crypto/rsa"
 	"strings"
 
-	"bitbucket.org/calmisland/go-server-shared/v2/errors"
-	"bitbucket.org/calmisland/go-server-shared/v2/requests/urlsigner"
-	"bitbucket.org/calmisland/go-server-shared/v2/services/aws/awscloudfront"
-	"bitbucket.org/calmisland/go-server-shared/v2/services/aws/awss3"
+	"bitbucket.org/calmisland/go-server-shared/v3/errors"
+	"bitbucket.org/calmisland/go-server-shared/v3/requests/urlsigner"
+	"bitbucket.org/calmisland/go-server-aws/awscloudfront"
+	"bitbucket.org/calmisland/go-server-aws/awss3"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 )

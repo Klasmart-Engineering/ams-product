@@ -3,8 +3,8 @@
 package main
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/v2/configs"
-	"bitbucket.org/calmisland/go-server-shared/v2/servers/restserver"
+	"bitbucket.org/calmisland/go-server-shared/v3/configs"
+	"bitbucket.org/calmisland/go-server-shared/v3/servers/restserver"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
 )
 

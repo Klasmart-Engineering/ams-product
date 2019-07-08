@@ -3,11 +3,11 @@ package handlers
 import (
 	"strings"
 
-	"bitbucket.org/calmisland/go-server-shared/v2/apierrors"
-	"bitbucket.org/calmisland/go-server-shared/v2/datareference"
-	"bitbucket.org/calmisland/go-server-shared/v2/requests/apirequests"
-	"bitbucket.org/calmisland/go-server-shared/v2/utils/timeutils"
-	"bitbucket.org/calmisland/go-server-standard/stdservices"
+	"bitbucket.org/calmisland/go-server-product/productservice"
+	"bitbucket.org/calmisland/go-server-shared/v3/apierrors"
+	"bitbucket.org/calmisland/go-server-shared/v3/datareference"
+	"bitbucket.org/calmisland/go-server-shared/v3/requests/apirequests"
+	"bitbucket.org/calmisland/go-server-shared/v3/utils/timeutils"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
@@ -39,7 +39,7 @@ func HandleProductInfoListByIds(req *apirequests.Request) (*apirequests.Response
 		return apirequests.ClientError(req, apierrors.ErrorInvalidParameters)
 	}
 
-	productVOList, err := stdservices.ProductService.GetProductVOListByIds(strings.Split(*productIDs, ","))
+	productVOList, err := productservice.ProductService.GetProductVOListByIds(strings.Split(*productIDs, ","))
 	if err != nil {
 		return apirequests.ServerError(req, err)
 	} else if productVOList == nil || (productVOList != nil && len(productVOList) == 0) {
@@ -77,7 +77,7 @@ func HandleProductInfo(req *apirequests.Request) (*apirequests.Response, error) 
 		return apirequests.ClientError(req, apierrors.ErrorInvalidParameters)
 	}
 
-	productVO, err := stdservices.ProductService.GetProductVOByProductID(*productID)
+	productVO, err := productservice.ProductService.GetProductVOByProductID(*productID)
 	if err != nil {
 		return apirequests.ServerError(req, err)
 	} else if productVO == nil {

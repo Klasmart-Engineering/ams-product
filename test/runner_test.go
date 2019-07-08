@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
-	"bitbucket.org/calmisland/go-server-shared/v2/configs"
-	"bitbucket.org/calmisland/go-server-standard/test/testdatabases/testdynamodb"
+	"bitbucket.org/calmisland/go-server-shared/v3/configs"
+	"bitbucket.org/calmisland/go-server-product/testproductdatabase/testproductdynamodb"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
 	"github.com/calmisland/go-testify/suite"
 )
@@ -16,5 +16,5 @@ func TestProduct(t *testing.T) {
 		panic(err)
 	}
 	server.Setup()
-	suite.Run(t, new(testdynamodb.ProductTestSuite))
+	suite.Run(t, new(testproductdynamodb.ProductTestSuite))
 }
