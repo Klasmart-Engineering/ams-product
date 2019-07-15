@@ -2,7 +2,7 @@ package services
 
 import (
 	"bitbucket.org/calmisland/go-server-shared/v3/configs"
-	"bitbucket.org/calmisland/go-server-shared/v3/errors"
+	"github.com/calmisland/go-errors"
 )
 
 type curriculumConfig struct {

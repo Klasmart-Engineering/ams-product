@@ -4,12 +4,12 @@ import (
 	"crypto/rsa"
 	"strings"
 
-	"bitbucket.org/calmisland/go-server-shared/v3/errors"
-	"bitbucket.org/calmisland/go-server-shared/v3/requests/urlsigner"
 	"bitbucket.org/calmisland/go-server-aws/awscloudfront"
 	"bitbucket.org/calmisland/go-server-aws/awss3"
+	"bitbucket.org/calmisland/go-server-shared/v3/requests/urlsigner"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/calmisland/go-errors"
 )
 
 type signInfo struct {
