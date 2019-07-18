@@ -1,7 +1,7 @@
 bitbucket.org/calmisland/go-server-aws v1.2.0 h1:fCLMkBhR4NXKSw54OECd9qQ7tunkoZqXj/AWiWP3NpQ=
 bitbucket.org/calmisland/go-server-aws v1.2.0/go.mod h1:72cqIEZ2OOc1HxK4q1GgWhZnxXJ12D1XIK8r+jj2bkQ=
-bitbucket.org/calmisland/go-server-product v1.0.1 h1:CFhvS6LZWtSz9d9iS+45aKqPxkOkmrHbgd+zdElQInw=
-bitbucket.org/calmisland/go-server-product v1.0.1/go.mod h1:Q13PRiviVLyzCCJaR93+gQ/Q5FA4hvWd9I70PH2jqbo=
+bitbucket.org/calmisland/go-server-product v1.0.2 h1:VbqC7yvsw1uukAqptWqsX9eSgl8spBpt0qAFE2xkKVU=
+bitbucket.org/calmisland/go-server-product v1.0.2/go.mod h1:Q13PRiviVLyzCCJaR93+gQ/Q5FA4hvWd9I70PH2jqbo=
 bitbucket.org/calmisland/go-server-shared/v3 v3.0.2 h1:f/GHIDx4BsEvU38VdS9uQssem3XURirhjnuN2VIBXHo=
 bitbucket.org/calmisland/go-server-shared/v3 v3.0.2/go.mod h1:m4dA/3B/b10TxSAts5v2oqA4HKtwHrHf+T9xmo7Ghkw=
 bitbucket.org/calmisland/go-server-shared/v3 v3.1.0 h1:YCvwEA4z+YwIgDnZ33icLMf8BjjI1OzcIlSU0H5aJNg=
