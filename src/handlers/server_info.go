@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/v3/apierrors"
-	"bitbucket.org/calmisland/go-server-shared/v3/requests/apirequests"
-	"bitbucket.org/calmisland/go-server-shared/v3/serverinfo"
+	"context"
+
+	"bitbucket.org/calmisland/go-server-info/serverinfo"
+	"bitbucket.org/calmisland/go-server-requests/apirequests"
 )
 
 type serverInfoResponseBody struct {
@@ -12,16 +13,13 @@ type serverInfoResponseBody struct {
 }
 
 // HandleServerInfo handles server information requests.
-func HandleServerInfo(req *apirequests.Request) (*apirequests.Response, error) {
-	if req.HTTPMethod != "GET" {
-		return apirequests.ClientError(req, apierrors.ErrorBadRequestMethod)
-	}
-
+func HandleServerInfo(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	serverRegionName := serverinfo.GetRegionName()
 	serverStageName := serverinfo.GetStageName()
 	response := serverInfoResponseBody{
 		RegionName: serverRegionName,
 		StageName:  serverStageName,
 	}
-	return apirequests.NewResponse(response)
+	resp.SetBody(&response)
+	return nil
 }

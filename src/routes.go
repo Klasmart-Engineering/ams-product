@@ -1,30 +1,35 @@
 package main
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/v3/requests/apirequests"
+	"bitbucket.org/calmisland/go-server-auth/authmiddlewares"
+	"bitbucket.org/calmisland/go-server-requests/apirouter"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/handlers"
 )
 
 var (
-	rootRouter *apirequests.Router
+	rootRouter *apirouter.Router
 )
 
 func initLambdaFunctions() {
-	rootRouter = &apirequests.Router{}
+	rootRouter = &apirouter.Router{}
 	routerV1 := createLambdaRouterV1()
 	rootRouter.AddRouter("v1", routerV1)
 }
 
-func createLambdaRouterV1() *apirequests.Router {
-	router := &apirequests.Router{}
+func createLambdaRouterV1() *apirouter.Router {
+	router := apirouter.NewRouter()
+
+	router.AddMiddleware(authmiddlewares.ValidateSession(globals.AccessTokenValidator, true))
+
 	router.AddMethodHandler("GET", "product", handlers.HandleProductInfoListByIds)
 	router.AddMethodHandler("GET", "serverinfo", handlers.HandleServerInfo)
 
-	productRouter := &apirequests.Router{}
+	productRouter := &apirouter.Router{}
 	productRouter.AddMethodHandlerWildcard("GET", "productId", handlers.HandleProductInfo)
 	router.AddRouter("product", productRouter)
 
-	specificProductRouter := &apirequests.Router{}
+	specificProductRouter := &apirouter.Router{}
 	specificProductRouter.AddMethodHandler("GET", "icon", handlers.HandleProductIconDownload)
 	productRouter.AddRouterWildcard("productId", specificProductRouter)
 

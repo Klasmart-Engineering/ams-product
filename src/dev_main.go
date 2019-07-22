@@ -3,8 +3,8 @@
 package main
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/v3/configs"
-	"bitbucket.org/calmisland/go-server-shared/v3/servers/restserver"
+	"bitbucket.org/calmisland/go-server-configs/configs"
+	"bitbucket.org/calmisland/go-server-requests/apiservers/httpserver"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
 )
 
@@ -17,7 +17,7 @@ func main() {
 	initLambdaFunctions()
 	initLambdaDevFunctions()
 
-	restServer := &restserver.Server{
+	restServer := &httpserver.Server{
 		ListenAddress: ":8044",
 		Handler:       rootRouter,
 	}

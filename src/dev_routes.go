@@ -3,36 +3,33 @@
 package main
 
 import (
+	"context"
+
 	"bitbucket.org/calmisland/go-server-product/productdatabase"
 
-	"bitbucket.org/calmisland/go-server-shared/v3/apierrors"
-	"bitbucket.org/calmisland/go-server-shared/v3/requests/apirequests"
+	"bitbucket.org/calmisland/go-server-requests/apirequests"
+	"bitbucket.org/calmisland/go-server-requests/apirouter"
 )
 
 func initLambdaDevFunctions() {
-	devRouter := &apirequests.Router{}
+	devRouter := apirouter.NewRouter()
+
 	devRouter.AddMethodHandler("GET", "createtables", createTablesRequest)
 	rootRouter.AddRouter("dev", devRouter)
 }
 
-func createTablesRequest(req *apirequests.Request) (*apirequests.Response, error) {
-	if req.HTTPMethod != "GET" {
-		return apirequests.ClientError(req, apierrors.ErrorBadRequestMethod)
-	}
-
+func createTablesRequest(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	// Get the database
 	db, err := productdatabase.GetDatabase()
 	if err != nil {
-		return apirequests.ServerError(req, err)
+		return resp.SetServerError(err)
 	}
 
 	err = db.CreateDatabaseTables()
 	if err != nil {
-		return apirequests.ServerError(req, err)
+		return resp.SetServerError(err)
 	}
 
-	return &apirequests.Response{
-		StatusCode: 200,
-		Body:       []byte("OK"),
-	}, nil
+	resp.SetStatus(200)
+	return nil
 }

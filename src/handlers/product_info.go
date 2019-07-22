@@ -1,13 +1,14 @@
 package handlers
 
 import (
+	"context"
 	"strings"
 
 	"bitbucket.org/calmisland/go-server-product/productservice"
-	"bitbucket.org/calmisland/go-server-shared/v3/apierrors"
-	"bitbucket.org/calmisland/go-server-shared/v3/datareference"
-	"bitbucket.org/calmisland/go-server-shared/v3/requests/apirequests"
-	"bitbucket.org/calmisland/go-server-shared/v3/utils/timeutils"
+	"bitbucket.org/calmisland/go-server-reference-data/productdata"
+	"bitbucket.org/calmisland/go-server-requests/apierrors"
+	"bitbucket.org/calmisland/go-server-requests/apirequests"
+	"bitbucket.org/calmisland/go-server-utils/timeutils"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
@@ -16,34 +17,25 @@ type productInfoListResponseBody struct {
 }
 
 type productInfoResponseBody struct {
-	ProductID   string                    `json:"prodId"`
-	Title       string                    `json:"title"`
-	Type        datareference.ProductType `json:"type"`
-	Description string                    `json:"description"`
-	UpdatedDate timeutils.UnixTime        `json:"updateTm"`
+	ProductID   string                  `json:"prodId"`
+	Title       string                  `json:"title"`
+	Type        productdata.ProductType `json:"type"`
+	Description string                  `json:"description"`
+	UpdatedDate timeutils.UnixTime      `json:"updateTm"`
 }
 
 // HandleProductInfoListByIds handles product information list requests.
-func HandleProductInfoListByIds(req *apirequests.Request) (*apirequests.Response, error) {
-	if req.HTTPMethod != "GET" {
-		return apirequests.ClientError(req, apierrors.ErrorBadRequestMethod)
+func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+	productIDs, hasQueryParam := req.GetQueryParam("id")
+	if !hasQueryParam {
+		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	sessionData := req.ValidateRequestToken()
-	if sessionData == nil {
-		return apirequests.ClientError(req, apierrors.ErrorExpiredAccessToken)
-	}
-
-	productIDs := req.GetQueryParam("id")
-	if productIDs == nil {
-		return apirequests.ClientError(req, apierrors.ErrorInvalidParameters)
-	}
-
-	productVOList, err := productservice.ProductService.GetProductVOListByIds(strings.Split(*productIDs, ","))
+	productVOList, err := productservice.ProductService.GetProductVOListByIds(strings.Split(productIDs, ","))
 	if err != nil {
-		return apirequests.ServerError(req, err)
+		return resp.SetServerError(err)
 	} else if productVOList == nil || (productVOList != nil && len(productVOList) == 0) {
-		return apirequests.ClientError(req, apierrors.ErrorItemNotFound)
+		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
 
 	products := make([]*productInfoResponseBody, len(productVOList))
@@ -56,32 +48,22 @@ func HandleProductInfoListByIds(req *apirequests.Request) (*apirequests.Response
 			UpdatedDate: productVO.UpdatedDate,
 		}
 	}
-	return apirequests.NewResponse(&productInfoListResponseBody{
-		Products: products,
-	})
+	resp.SetBody(&products)
+	return nil
 }
 
 // HandleProductInfo handles product information requests.
-func HandleProductInfo(req *apirequests.Request) (*apirequests.Response, error) {
-	if req.HTTPMethod != "GET" {
-		return apirequests.ClientError(req, apierrors.ErrorBadRequestMethod)
+func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+	productID, hasQueryParam := req.GetPathParam("productId")
+	if !hasQueryParam {
+		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	sessionData := req.ValidateRequestToken()
-	if sessionData == nil {
-		return apirequests.ClientError(req, apierrors.ErrorExpiredAccessToken)
-	}
-
-	productID := req.GetPathParam("productId")
-	if productID == nil {
-		return apirequests.ClientError(req, apierrors.ErrorInvalidParameters)
-	}
-
-	productVO, err := productservice.ProductService.GetProductVOByProductID(*productID)
+	productVO, err := productservice.ProductService.GetProductVOByProductID(productID)
 	if err != nil {
-		return apirequests.ServerError(req, err)
+		return resp.SetServerError(err)
 	} else if productVO == nil {
-		return apirequests.ClientError(req, apierrors.ErrorItemNotFound)
+		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
 
 	response := productInfoResponseBody{
@@ -91,29 +73,22 @@ func HandleProductInfo(req *apirequests.Request) (*apirequests.Response, error) 
 		Description: productVO.Description,
 		UpdatedDate: productVO.UpdatedDate,
 	}
-	return apirequests.NewResponse(response)
+	resp.SetBody(&response)
+	return nil
 }
 
 // HandleProductIconDownload handles downloading product icons.
-func HandleProductIconDownload(req *apirequests.Request) (*apirequests.Response, error) {
-	if req.HTTPMethod != "GET" {
-		return apirequests.ClientError(req, apierrors.ErrorBadRequestMethod)
+func HandleProductIconDownload(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+	productID, hasQueryParam := req.GetPathParam("productId")
+	if !hasQueryParam {
+		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	sessionData := req.ValidateRequestToken()
-	if sessionData == nil {
-		return apirequests.ClientError(req, apierrors.ErrorExpiredAccessToken)
-	}
-
-	productID := req.GetPathParam("productId")
-	if productID == nil {
-		return apirequests.ClientError(req, apierrors.ErrorInvalidParameters)
-	}
-
-	fileURL, err := services.GetProgramIconURL(*productID)
+	fileURL, err := services.GetProgramIconURL(productID)
 	if err != nil {
-		return apirequests.ServerError(req, err)
+		return resp.SetServerError(err)
 	}
 
-	return apirequests.NewRedirectResponse(fileURL)
+	resp.Redirect(fileURL)
+	return nil
 }

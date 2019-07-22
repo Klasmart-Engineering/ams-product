@@ -1,7 +1,7 @@
 package services
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/v3/configs"
+	"bitbucket.org/calmisland/go-server-configs/configs"
 	"github.com/calmisland/go-errors"
 )
 
