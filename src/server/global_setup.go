@@ -3,20 +3,18 @@
 package server
 
 import (
-	"bitbucket.org/calmisland/go-server-shared/v3/configs"
-	"bitbucket.org/calmisland/go-server-shared/v3/errors/errorreporter"
-	"bitbucket.org/calmisland/go-server-shared/v3/errors/errorreporter/slackreporter"
-	"bitbucket.org/calmisland/go-server-shared/v3/security"
 	"bitbucket.org/calmisland/go-server-aws/awsdynamodb"
+	"bitbucket.org/calmisland/go-server-configs/configs"
+	"bitbucket.org/calmisland/go-server-logs/errorreporter"
+	"bitbucket.org/calmisland/go-server-logs/errorreporter/slackreporter"
 	"bitbucket.org/calmisland/go-server-product/productdatabase/productdynamodb"
+	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
 // Setup setup the server based on configuration
 func Setup() {
-	if err := security.InitializeFromConfigs(); err != nil {
-		panic(err)
-	}
 	if err := awsdynamodb.InitializeFromConfigs(); err != nil {
 		panic(err)
 	}
@@ -24,9 +22,25 @@ func Setup() {
 		panic(err)
 	}
 
+	setupAccessTokenSystems()
+
 	productdynamodb.ActivateDatabase()
 
 	setupSlackReporter()
+
+	globals.Verify()
+}
+
+func setupAccessTokenSystems() {
+	var validatorConfig accesstokens.ValidatorConfig
+	err := configs.LoadConfig("access_tokens", &validatorConfig, true)
+	if err != nil {
+		panic(err)
+	}
+	globals.AccessTokenValidator, err = accesstokens.NewValidator(validatorConfig)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func setupSlackReporter() {

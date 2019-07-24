@@ -6,7 +6,7 @@ import (
 
 	"bitbucket.org/calmisland/go-server-aws/awscloudfront"
 	"bitbucket.org/calmisland/go-server-aws/awss3"
-	"bitbucket.org/calmisland/go-server-shared/v3/requests/urlsigner"
+	"bitbucket.org/calmisland/go-server-requests/urlsign"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/calmisland/go-errors"
@@ -28,7 +28,7 @@ type signInfoAWSS3 struct {
 }
 
 var (
-	urlSigner urlsigner.Signer
+	urlSigner urlsign.Signer
 )
 
 func initSignedUrls() error {
@@ -85,7 +85,7 @@ func setupAWSS3Signing(signInfo *signInfoAWSS3) error {
 	return nil
 }
 
-func signURL(url string, options urlsigner.SignOptions) (string, error) {
+func signURL(url string, options urlsign.SignOptions) (string, error) {
 	if urlSigner != nil {
 		return urlSigner.SignURL(url, options)
 	}

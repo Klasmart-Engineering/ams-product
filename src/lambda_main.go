@@ -3,9 +3,9 @@
 package main
 
 import (
-	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
 	"bitbucket.org/calmisland/go-server-aws/awslambda"
-	"bitbucket.org/calmisland/go-server-shared/v3/configs"
+	"bitbucket.org/calmisland/go-server-configs/configs"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
 )
 
 func main() {
@@ -15,5 +15,5 @@ func main() {
 	}
 	server.Setup()
 	initLambdaFunctions()
-	awslambda.StartRestHandler(rootRouter)
+	awslambda.StartAPIHandler(rootRouter)
 }
