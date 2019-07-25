@@ -15,5 +15,9 @@ func main() {
 	}
 	server.Setup()
 	initLambdaFunctions()
-	awslambda.StartAPIHandler(rootRouter)
+
+	err = awslambda.StartAPIHandler(rootRouter)
+	if err != nil {
+		panic(err)
+	}
 }
