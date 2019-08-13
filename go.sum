@@ -1,5 +1,5 @@
-bitbucket.org/calmisland/go-server-auth v1.0.1 h1:tz016NeXM81enRUf1wpREK2j0JzcNHstHJVIcnw+gAA=
-bitbucket.org/calmisland/go-server-auth v1.0.1/go.mod h1:2+aQth3j8VdIJq0lzkuP2B7gnXrPQX5WrPkGk+EQQSE=
+bitbucket.org/calmisland/go-server-auth v1.0.2 h1:NRzdalbtYtw68EFbRj7N/vAWKBYOTnETWLH6geO/y/k=
+bitbucket.org/calmisland/go-server-auth v1.0.2/go.mod h1:8ONwIX0R93WCt7PprDzUkiGQz9nbCZ41up5/sx5rz/A=
 bitbucket.org/calmisland/go-server-aws v1.4.1/go.mod h1:Bz4fdS3YcoxYPRAwaSbevEKkMXZhDsh32zk6D3X3vvc=
 bitbucket.org/calmisland/go-server-aws v1.4.2 h1:MCqwlbrZZmnztntabX5CnHdFncSkqA09W0u/mFvGbgE=
 bitbucket.org/calmisland/go-server-aws v1.4.2/go.mod h1:MydAOKf5y9jNdhF4g1ec2DW+vUUKBtHiwWlG1ra16p0=
@@ -21,10 +21,15 @@ bitbucket.org/calmisland/go-server-reference-data v1.0.0/go.mod h1:zeNZlxBHPNDrZ
 bitbucket.org/calmisland/go-server-requests v1.2.0/go.mod h1:ThYPm4V15s+4RbW7QniWTzJ0fmat6cWm+ryqgQpPK70=
 bitbucket.org/calmisland/go-server-requests v1.4.1 h1:+mEGxqTYnVnJtOZKBW/kA6bvWHg3agecL59xSL5buV8=
 bitbucket.org/calmisland/go-server-requests v1.4.1/go.mod h1:ThYPm4V15s+4RbW7QniWTzJ0fmat6cWm+ryqgQpPK70=
+bitbucket.org/calmisland/go-server-requests v1.4.3/go.mod h1:ThYPm4V15s+4RbW7QniWTzJ0fmat6cWm+ryqgQpPK70=
+bitbucket.org/calmisland/go-server-requests v1.5.0 h1:/MzLHsMVhg7UrTEWwcfzrTJRYfZsEvccmg1DLu7GupY=
+bitbucket.org/calmisland/go-server-requests v1.5.0/go.mod h1:ufUATf4vvF1APTnncVBQYKOnSrRXJHJhe2ygb2eAGNY=
 bitbucket.org/calmisland/go-server-utils v1.0.0/go.mod h1:5icb47nXPo2GH++D+2DSYnzPIZrlQmQ7Pi7jA+gS2yQ=
 bitbucket.org/calmisland/go-server-utils v1.1.0/go.mod h1:5icb47nXPo2GH++D+2DSYnzPIZrlQmQ7Pi7jA+gS2yQ=
 bitbucket.org/calmisland/go-server-utils v1.2.0 h1:G7VlnsBRmuxo8I7xo7Pflylc93oe2XhP0v0KGJS+2U8=
 bitbucket.org/calmisland/go-server-utils v1.2.0/go.mod h1:5icb47nXPo2GH++D+2DSYnzPIZrlQmQ7Pi7jA+gS2yQ=
+bitbucket.org/calmisland/go-server-utils v1.3.0 h1:iUOs5R47BPEtwb56kYoH+fyr2JjkaTPJziPTl1w2XfM=
+bitbucket.org/calmisland/go-server-utils v1.3.0/go.mod h1:5icb47nXPo2GH++D+2DSYnzPIZrlQmQ7Pi7jA+gS2yQ=
 bitbucket.org/calmisland/go-slack v0.2.1 h1:IUzk534eCdtt0vrWsHwYza46AbDZSkCpkQp0KgpsfgA=
 bitbucket.org/calmisland/go-slack v0.2.1/go.mod h1:3XswLvtaaTFyIwLQ7Cow4DCLgegWXml2YJwoco9R0g8=
 github.com/aws/aws-lambda-go v1.11.1 h1:wuOnhS5aqzPOWns71FO35PtbtBKHr4MYsPVt5qXLSfI=
@@ -90,4 +95,6 @@ gopkg.in/go-playground/assert.v1 v1.2.1 h1:xoYuJVE7KT85PYWrN730RguIQO0ePzVRfFMXa
 gopkg.in/go-playground/assert.v1 v1.2.1/go.mod h1:9RXL0bg/zibRAgZUYszZSwO/z8Y/a8bDuhia5mkpMnE=
 gopkg.in/go-playground/validator.v9 v9.29.0 h1:5ofssLNYgAA/inWn6rTZ4juWpRJUwEnXc1LG2IeXwgQ=
 gopkg.in/go-playground/validator.v9 v9.29.0/go.mod h1:+c9/zcJMFNgbLvly1L1V+PpxWdVbfP1avr/N00E2vyQ=
+gopkg.in/go-playground/validator.v9 v9.29.1 h1:SvGtYmN60a5CVKTOzMSyfzWDeZRxRuGvRQyEAKbw1xc=
+gopkg.in/go-playground/validator.v9 v9.29.1/go.mod h1:+c9/zcJMFNgbLvly1L1V+PpxWdVbfP1avr/N00E2vyQ=
 gopkg.in/urfave/cli.v1 v1.20.0/go.mod h1:vuBzUtMdQeixQj8LVd+/98pzhxNGQoyuPBlsXHOQNO0=
