@@ -48,7 +48,11 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 			UpdatedDate: productVO.UpdatedDate,
 		}
 	}
-	resp.SetBody(&products)
+
+	response := productInfoListResponseBody{
+		Products: products,
+	}
+	resp.SetBody(&response)
 	return nil
 }
 
