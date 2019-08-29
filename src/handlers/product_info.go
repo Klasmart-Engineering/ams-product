@@ -17,12 +17,12 @@ type productInfoListResponseBody struct {
 }
 
 type productInfoResponseBody struct {
-	ProductID      string                  `json:"prodId"`
-	Title          string                  `json:"title"`
-	Type           productdata.ProductType `json:"type"`
-	Description    string                  `json:"description"`
-	ProductAppInfo *productAppInfo         `json:"appInfo,omitempty"`
-	UpdatedDate    timeutils.UnixTime      `json:"updateTm"`
+	ProductID   string                  `json:"prodId"`
+	Title       string                  `json:"title"`
+	Type        productdata.ProductType `json:"type"`
+	Description string                  `json:"description"`
+	AppInfo     *productAppInfo         `json:"appInfo,omitempty"`
+	UpdatedDate timeutils.UnixTime      `json:"updateTm"`
 }
 
 type productAppInfo struct {
@@ -33,15 +33,6 @@ type productAppInfo struct {
 type productAppStoreInfo struct {
 	AppID    string `json:"appId"`
 	StoreURL string `json:"storeUrl"`
-}
-
-type productInfo struct {
-	ProductID      string                  `json:"prodId"`
-	Title          string                  `json:"title"`
-	Type           productdata.ProductType `json:"type"`
-	Description    string                  `json:"description"`
-	ProductAppInfo *productAppInfo         `json:"appInfo,omitempty"`
-	UpdatedDate    timeutils.UnixTime      `json:"updateTm"`
 }
 
 // HandleProductInfoListByIds handles product information list requests.
@@ -94,36 +85,35 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 	var appStoreInfo *productAppStoreInfo
 	var googlePlayInfo *productAppStoreInfo
 
-	if productVO.ProductAppInfo.AppStore != nil {
-		appStoreInfo = &productAppStoreInfo{
-			AppID:    productVO.ProductAppInfo.AppStore.AppID,
-			StoreURL: productVO.ProductAppInfo.AppStore.StoreURL,
-		}
-	} else {
-		appStoreInfo = nil
-	}
+	if productVO.AppInfo != nil {
 
-	if productVO.ProductAppInfo.GooglePlay != nil {
-		googlePlayInfo = &productAppStoreInfo{
-			AppID:    productVO.ProductAppInfo.AppStore.AppID,
-			StoreURL: productVO.ProductAppInfo.AppStore.StoreURL,
+		if productVO.AppInfo.AppStore != nil {
+			appStoreInfo = &productAppStoreInfo{
+				AppID:    productVO.AppInfo.AppStore.AppID,
+				StoreURL: productVO.AppInfo.AppStore.StoreURL,
+			}
 		}
-	} else {
-		googlePlayInfo = nil
-	}
 
-	appInfo = &productAppInfo{
-		AppStore:   appStoreInfo,
-		GooglePlay: googlePlayInfo,
+		if productVO.AppInfo.GooglePlay != nil {
+			googlePlayInfo = &productAppStoreInfo{
+				AppID:    productVO.AppInfo.AppStore.AppID,
+				StoreURL: productVO.AppInfo.AppStore.StoreURL,
+			}
+		}
+
+		appInfo = &productAppInfo{
+			AppStore:   appStoreInfo,
+			GooglePlay: googlePlayInfo,
+		}
 	}
 
 	response := productInfoResponseBody{
-		ProductID:      productVO.ProductID,
-		Title:          productVO.Title,
-		Type:           productVO.Type,
-		Description:    productVO.Description,
-		ProductAppInfo: appInfo,
-		UpdatedDate:    productVO.UpdatedDate,
+		ProductID:   productVO.ProductID,
+		Title:       productVO.Title,
+		Type:        productVO.Type,
+		Description: productVO.Description,
+		AppInfo:     appInfo,
+		UpdatedDate: productVO.UpdatedDate,
 	}
 	resp.SetBody(&response)
 	return nil
