@@ -21,7 +21,18 @@ type productInfoResponseBody struct {
 	Title       string                  `json:"title"`
 	Type        productdata.ProductType `json:"type"`
 	Description string                  `json:"description"`
+	AppInfo     *productAppInfo         `json:"appInfo,omitempty"`
 	UpdatedDate timeutils.UnixTime      `json:"updateTm"`
+}
+
+type productAppInfo struct {
+	AppStore   *productAppStoreInfo `json:"appStore,omitempty"`
+	GooglePlay *productAppStoreInfo `json:"googlePlay,omitempty"`
+}
+
+type productAppStoreInfo struct {
+	AppID    string `json:"appId"`
+	StoreURL string `json:"storeUrl"`
 }
 
 // HandleProductInfoListByIds handles product information list requests.
@@ -70,11 +81,35 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
 
+	var appInfo *productAppInfo
+	var appStoreInfo *productAppStoreInfo
+	var googlePlayInfo *productAppStoreInfo
+
+	if productVO.AppInfo != nil {
+		if productVO.AppInfo.AppStore != nil {
+			appStoreInfo = &productAppStoreInfo{
+				AppID:    productVO.AppInfo.AppStore.AppID,
+				StoreURL: productVO.AppInfo.AppStore.StoreURL,
+			}
+		}
+		if productVO.AppInfo.GooglePlay != nil {
+			googlePlayInfo = &productAppStoreInfo{
+				AppID:    productVO.AppInfo.AppStore.AppID,
+				StoreURL: productVO.AppInfo.AppStore.StoreURL,
+			}
+		}
+		appInfo = &productAppInfo{
+			AppStore:   appStoreInfo,
+			GooglePlay: googlePlayInfo,
+		}
+	}
+
 	response := productInfoResponseBody{
 		ProductID:   productVO.ProductID,
 		Title:       productVO.Title,
 		Type:        productVO.Type,
 		Description: productVO.Description,
+		AppInfo:     appInfo,
 		UpdatedDate: productVO.UpdatedDate,
 	}
 	resp.SetBody(&response)

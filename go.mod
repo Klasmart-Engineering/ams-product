@@ -8,7 +8,7 @@ require (
 	bitbucket.org/calmisland/go-server-configs v1.0.0
 	bitbucket.org/calmisland/go-server-info v1.0.0
 	bitbucket.org/calmisland/go-server-logs v1.0.1
-	bitbucket.org/calmisland/go-server-product v1.0.4
+	bitbucket.org/calmisland/go-server-product v1.0.5
 	bitbucket.org/calmisland/go-server-reference-data v1.0.0
 	bitbucket.org/calmisland/go-server-requests v1.5.0
 	bitbucket.org/calmisland/go-server-utils v1.3.0
