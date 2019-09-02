@@ -86,21 +86,18 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 	var googlePlayInfo *productAppStoreInfo
 
 	if productVO.AppInfo != nil {
-
 		if productVO.AppInfo.AppStore != nil {
 			appStoreInfo = &productAppStoreInfo{
 				AppID:    productVO.AppInfo.AppStore.AppID,
 				StoreURL: productVO.AppInfo.AppStore.StoreURL,
 			}
 		}
-
 		if productVO.AppInfo.GooglePlay != nil {
 			googlePlayInfo = &productAppStoreInfo{
 				AppID:    productVO.AppInfo.AppStore.AppID,
 				StoreURL: productVO.AppInfo.AppStore.StoreURL,
 			}
 		}
-
 		appInfo = &productAppInfo{
 			AppStore:   appStoreInfo,
 			GooglePlay: googlePlayInfo,
