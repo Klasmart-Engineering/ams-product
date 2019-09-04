@@ -5,14 +5,14 @@ import (
 	"github.com/calmisland/go-errors"
 )
 
-type curriculumConfig struct {
+type productConfig struct {
 	CacheExpireMinutes int32     `json:"cacheExpireMinutes"`
 	DownloadBaseURL    string    `json:"downloadBaseUrl"`
 	Signing            *signInfo `json:"signing"`
 }
 
 var (
-	config curriculumConfig
+	config productConfig
 )
 
 // InitializeFromConfigs InitializeFromConfigs

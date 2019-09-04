@@ -9,12 +9,30 @@ import (
 	"bitbucket.org/calmisland/go-server-utils/urlutils"
 )
 
-// GetProgramIconURL returns the URL for a specific program icon.
-func GetProgramIconURL(productID string) (string, error) {
+const (
+	iconDownloadURLDuration = 30 * time.Minute
+)
+
+// GetContentIconURL returns the URL for a specific content icon.
+func GetContentIconURL(contentID string) (string, error) {
+	contentID = url.PathEscape(contentID)
+	iconFileName := fmt.Sprintf("%s.png", contentID)
+	iconURL := urlutils.JoinURL(config.DownloadBaseURL, "icons/contents", iconFileName)
+	urlExpireTime := time.Now().Add(iconDownloadURLDuration)
+
+	return signURL(iconURL, urlsign.SignOptions{
+		Expires: urlExpireTime,
+	})
+}
+
+// GetProductIconURL returns the URL for a specific product icon.
+func GetProductIconURL(productID string) (string, error) {
 	productID = url.PathEscape(productID)
 	iconFileName := fmt.Sprintf("%s.png", productID)
 	iconURL := urlutils.JoinURL(config.DownloadBaseURL, "icons/products", iconFileName)
+	urlExpireTime := time.Now().Add(iconDownloadURLDuration)
+
 	return signURL(iconURL, urlsign.SignOptions{
-		Expires: time.Now().Add(30 * time.Minute),
+		Expires: urlExpireTime,
 	})
 }
