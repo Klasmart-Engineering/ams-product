@@ -37,12 +37,17 @@ type productAppStoreInfo struct {
 
 // HandleProductInfoListByIds handles product information list requests.
 func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	productIDs, hasQueryParam := req.GetQueryParam("id")
-	if !hasQueryParam {
+	productIDs := req.GetQueryParamMulti("id")
+	if len(productIDs) == 0 {
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	productVOList, err := productservice.ProductService.GetProductVOListByIds(strings.Split(productIDs, ","))
+	// NOTE: This is for backwards compatibility, to support comma-separated values in just one parameter
+	if len(productIDs) == 1 && strings.ContainsRune(productIDs[0], ',') {
+		productIDs = strings.Split(productIDs[0], ",")
+	}
+
+	productVOList, err := productservice.ProductService.GetProductVOListByIds(productIDs)
 	if err != nil {
 		return resp.SetServerError(err)
 	} else if productVOList == nil || (productVOList != nil && len(productVOList) == 0) {
