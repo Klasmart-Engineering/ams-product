@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"bitbucket.org/calmisland/go-server-product/productid"
 	"bitbucket.org/calmisland/go-server-product/productservice"
 	"bitbucket.org/calmisland/go-server-reference-data/productdata"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
@@ -126,6 +127,11 @@ func HandleProductIconDownload(ctx context.Context, req *apirequests.Request, re
 	productID, hasQueryParam := req.GetPathParam("productId")
 	if !hasQueryParam {
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+	}
+
+	productID, err := productid.GetProductIDShortPrefix(productID)
+	if err != nil {
+		return resp.SetClientError(apierrors.ErrorInputInvalidFormat)
 	}
 
 	fileURL, err := services.GetProgramIconURL(productID)
