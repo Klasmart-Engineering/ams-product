@@ -87,7 +87,12 @@ func setupAWSS3Signing(signInfo *signInfoAWSS3) error {
 
 func signURL(url string, options urlsign.SignOptions) (string, error) {
 	if urlSigner != nil {
-		return urlSigner.SignURL(url, options)
+		signResult, err := urlSigner.SignURL(url, options)
+		if err != nil {
+			return "", err
+		}
+
+		return signResult.URL, nil
 	}
 
 	return url, nil

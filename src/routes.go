@@ -22,14 +22,23 @@ func createLambdaRouterV1() *apirouter.Router {
 
 	router.AddMiddleware(authmiddlewares.ValidateSession(globals.AccessTokenValidator, true))
 
+	router.AddMethodHandler("GET", "content", handlers.HandleContentInfoMultiple)
 	router.AddMethodHandler("GET", "product", handlers.HandleProductInfoListByIds)
 	router.AddMethodHandler("GET", "serverinfo", handlers.HandleServerInfo)
 
-	productRouter := &apirouter.Router{}
+	contentRouter := apirouter.NewRouter()
+	contentRouter.AddMethodHandlerWildcard("GET", "contentId", handlers.HandleContentInfo)
+	router.AddRouter("content", contentRouter)
+
+	specificContentRouter := apirouter.NewRouter()
+	specificContentRouter.AddMethodHandler("GET", "icon", handlers.HandleContentIconDownload)
+	contentRouter.AddRouterWildcard("productId", specificContentRouter)
+
+	productRouter := apirouter.NewRouter()
 	productRouter.AddMethodHandlerWildcard("GET", "productId", handlers.HandleProductInfo)
 	router.AddRouter("product", productRouter)
 
-	specificProductRouter := &apirouter.Router{}
+	specificProductRouter := apirouter.NewRouter()
 	specificProductRouter.AddMethodHandler("GET", "icon", handlers.HandleProductIconDownload)
 	productRouter.AddRouterWildcard("productId", specificProductRouter)
 

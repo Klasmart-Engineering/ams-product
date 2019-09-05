@@ -57,11 +57,13 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 
 	products := make([]*productInfoResponseBody, len(productVOList))
 	for i, productVO := range productVOList {
+		appInfo := convertProductAppInfo(productVO.AppInfo)
 		products[i] = &productInfoResponseBody{
 			ProductID:   productVO.ProductID,
 			Title:       productVO.Title,
 			Type:        productVO.Type,
 			Description: productVO.Description,
+			AppInfo:     appInfo,
 			UpdatedDate: productVO.UpdatedDate,
 		}
 	}
@@ -75,8 +77,8 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 
 // HandleProductInfo handles product information requests.
 func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	productID, hasQueryParam := req.GetPathParam("productId")
-	if !hasQueryParam {
+	productID, _ := req.GetPathParam("productId")
+	if len(productID) == 0 {
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
@@ -87,29 +89,7 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
 
-	var appInfo *productAppInfo
-	var appStoreInfo *productAppStoreInfo
-	var googlePlayInfo *productAppStoreInfo
-
-	if productVO.AppInfo != nil {
-		if productVO.AppInfo.AppStore != nil {
-			appStoreInfo = &productAppStoreInfo{
-				AppID:    productVO.AppInfo.AppStore.AppID,
-				StoreURL: productVO.AppInfo.AppStore.StoreURL,
-			}
-		}
-		if productVO.AppInfo.GooglePlay != nil {
-			googlePlayInfo = &productAppStoreInfo{
-				AppID:    productVO.AppInfo.AppStore.AppID,
-				StoreURL: productVO.AppInfo.AppStore.StoreURL,
-			}
-		}
-		appInfo = &productAppInfo{
-			AppStore:   appStoreInfo,
-			GooglePlay: googlePlayInfo,
-		}
-	}
-
+	appInfo := convertProductAppInfo(productVO.AppInfo)
 	response := productInfoResponseBody{
 		ProductID:   productVO.ProductID,
 		Title:       productVO.Title,
@@ -124,8 +104,8 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 
 // HandleProductIconDownload handles downloading product icons.
 func HandleProductIconDownload(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	productID, hasQueryParam := req.GetPathParam("productId")
-	if !hasQueryParam {
+	productID, _ := req.GetPathParam("productId")
+	if len(productID) == 0 {
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
@@ -134,11 +114,35 @@ func HandleProductIconDownload(ctx context.Context, req *apirequests.Request, re
 		return resp.SetClientError(apierrors.ErrorInputInvalidFormat)
 	}
 
-	fileURL, err := services.GetProgramIconURL(productID)
+	fileURL, err := services.GetProductIconURL(productID)
 	if err != nil {
 		return resp.SetServerError(err)
 	}
 
 	resp.Redirect(fileURL)
 	return nil
+}
+
+func convertProductAppInfo(serviceInfo *productservice.ProductAppInfo) *productAppInfo {
+	if serviceInfo == nil {
+		return nil
+	}
+
+	var appStoreInfo = convertProductAppStoreInfo(serviceInfo.AppStore)
+	var googlePlayInfo = convertProductAppStoreInfo(serviceInfo.GooglePlay)
+	return &productAppInfo{
+		AppStore:   appStoreInfo,
+		GooglePlay: googlePlayInfo,
+	}
+}
+
+func convertProductAppStoreInfo(serviceInfo *productservice.ProductAppStoreInfo) *productAppStoreInfo {
+	if serviceInfo == nil {
+		return nil
+	}
+
+	return &productAppStoreInfo{
+		AppID:    serviceInfo.AppID,
+		StoreURL: serviceInfo.StoreURL,
+	}
 }
