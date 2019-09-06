@@ -23,7 +23,7 @@ type productInfoResponseBody struct {
 	Type        productdata.ProductType `json:"type"`
 	Description string                  `json:"description"`
 	AppInfo     *productAppInfo         `json:"appInfo,omitempty"`
-	UpdatedDate timeutils.UnixTime      `json:"updateTm"`
+	UpdatedDate timeutils.EpochTimeMS   `json:"updateTm"`
 }
 
 type productAppInfo struct {
@@ -51,8 +51,6 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 	productVOList, err := productservice.ProductService.GetProductVOListByIds(productIDs)
 	if err != nil {
 		return resp.SetServerError(err)
-	} else if productVOList == nil || (productVOList != nil && len(productVOList) == 0) {
-		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
 
 	products := make([]*productInfoResponseBody, len(productVOList))

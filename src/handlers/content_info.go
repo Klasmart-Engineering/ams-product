@@ -3,6 +3,9 @@ package handlers
 import (
 	"context"
 
+	"bitbucket.org/calmisland/go-server-product/contentservice"
+	"bitbucket.org/calmisland/go-server-product/productid"
+	"bitbucket.org/calmisland/go-server-reference-data/productdata"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
@@ -14,12 +17,13 @@ type contentInfoListResponseBody struct {
 }
 
 type contentInfoResponseBody struct {
-	ContentID   string              `json:"id"`
-	ProductID   string              `json:"productId"`
-	Title       string              `json:"title"`
-	Description string              `json:"description"`
-	KidsAppInfo *kidsAppContentInfo `json:"kidsAppInfo,omitempty"`
-	UpdatedDate timeutils.UnixTime  `json:"updateTm"`
+	ContentID   string                  `json:"id"`
+	ProductID   string                  `json:"productId"`
+	Title       string                  `json:"title"`
+	Type        productdata.ContentType `json:"type"`
+	Description string                  `json:"description"`
+	KidsAppInfo *kidsAppContentInfo     `json:"kidsAppInfo,omitempty"`
+	UpdatedDate timeutils.EpochTimeMS   `json:"updateTm"`
 }
 
 type kidsAppContentInfo struct {
@@ -34,7 +38,21 @@ func HandleContentInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	response := contentInfoResponseBody{}
+	contentVO, err := contentservice.ContentService.GetContentVOByContentID(contentID)
+	if err != nil {
+		return resp.SetServerError(err)
+	}
+
+	kidsAppInfo := convertContentKidsAppInfoFromService(contentVO.KidsAppInfo)
+	response := contentInfoResponseBody{
+		ContentID:   contentVO.ContentID,
+		ProductID:   contentVO.ProductID,
+		Title:       contentVO.Title,
+		Type:        contentVO.Type,
+		Description: contentVO.Description,
+		KidsAppInfo: kidsAppInfo,
+		UpdatedDate: contentVO.UpdatedDate,
+	}
 	resp.SetBody(&response)
 	return nil
 }
@@ -46,7 +64,28 @@ func HandleContentInfoMultiple(ctx context.Context, req *apirequests.Request, re
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	response := contentInfoListResponseBody{}
+	contentVOList, err := contentservice.ContentService.GetContentVOListByIds(contentIDs)
+	if err != nil {
+		return resp.SetServerError(err)
+	}
+
+	contents := make([]*contentInfoResponseBody, len(contentVOList))
+	for i, contentVO := range contentVOList {
+		kidsAppInfo := convertContentKidsAppInfoFromService(contentVO.KidsAppInfo)
+		contents[i] = &contentInfoResponseBody{
+			ContentID:   contentVO.ContentID,
+			ProductID:   contentVO.ProductID,
+			Title:       contentVO.Title,
+			Type:        contentVO.Type,
+			Description: contentVO.Description,
+			KidsAppInfo: kidsAppInfo,
+			UpdatedDate: contentVO.UpdatedDate,
+		}
+	}
+
+	response := contentInfoListResponseBody{
+		Contents: contents,
+	}
 	resp.SetBody(&response)
 	return nil
 }
@@ -58,6 +97,11 @@ func HandleContentIconDownload(ctx context.Context, req *apirequests.Request, re
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
+	contentID, err := productid.GetProductIDShortPrefix(contentID)
+	if err != nil {
+		return resp.SetClientError(apierrors.ErrorInputInvalidFormat)
+	}
+
 	fileURL, err := services.GetContentIconURL(contentID)
 	if err != nil {
 		return resp.SetServerError(err)
@@ -65,4 +109,15 @@ func HandleContentIconDownload(ctx context.Context, req *apirequests.Request, re
 
 	resp.Redirect(fileURL)
 	return nil
+}
+
+func convertContentKidsAppInfoFromService(serviceInfo *contentservice.ContentKidsAppInfo) *kidsAppContentInfo {
+	if serviceInfo == nil {
+		return nil
+	}
+
+	return &kidsAppContentInfo{
+		ContentID:   serviceInfo.ContentID,
+		ContentType: serviceInfo.ContentType,
+	}
 }
