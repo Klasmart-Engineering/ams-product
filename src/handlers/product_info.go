@@ -57,7 +57,7 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 
 	products := make([]*productInfoResponseBody, len(productVOList))
 	for i, productVO := range productVOList {
-		appInfo := convertProductAppInfo(productVO.AppInfo)
+		appInfo := convertProductAppInfoFromService(productVO.AppInfo)
 		products[i] = &productInfoResponseBody{
 			ProductID:   productVO.ProductID,
 			Title:       productVO.Title,
@@ -89,7 +89,7 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
 
-	appInfo := convertProductAppInfo(productVO.AppInfo)
+	appInfo := convertProductAppInfoFromService(productVO.AppInfo)
 	response := productInfoResponseBody{
 		ProductID:   productVO.ProductID,
 		Title:       productVO.Title,
@@ -123,20 +123,20 @@ func HandleProductIconDownload(ctx context.Context, req *apirequests.Request, re
 	return nil
 }
 
-func convertProductAppInfo(serviceInfo *productservice.ProductAppInfo) *productAppInfo {
+func convertProductAppInfoFromService(serviceInfo *productservice.ProductAppInfo) *productAppInfo {
 	if serviceInfo == nil {
 		return nil
 	}
 
-	var appStoreInfo = convertProductAppStoreInfo(serviceInfo.AppStore)
-	var googlePlayInfo = convertProductAppStoreInfo(serviceInfo.GooglePlay)
+	appStoreInfo := convertProductAppStoreInfoFromService(serviceInfo.AppStore)
+	googlePlayInfo := convertProductAppStoreInfoFromService(serviceInfo.GooglePlay)
 	return &productAppInfo{
 		AppStore:   appStoreInfo,
 		GooglePlay: googlePlayInfo,
 	}
 }
 
-func convertProductAppStoreInfo(serviceInfo *productservice.ProductAppStoreInfo) *productAppStoreInfo {
+func convertProductAppStoreInfoFromService(serviceInfo *productservice.ProductAppStoreInfo) *productAppStoreInfo {
 	if serviceInfo == nil {
 		return nil
 	}
