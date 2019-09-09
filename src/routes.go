@@ -32,7 +32,7 @@ func createLambdaRouterV1() *apirouter.Router {
 
 	specificContentRouter := apirouter.NewRouter()
 	specificContentRouter.AddMethodHandler("GET", "icon", handlers.HandleContentIconDownload)
-	contentRouter.AddRouterWildcard("productId", specificContentRouter)
+	contentRouter.AddRouterWildcard("contentId", specificContentRouter)
 
 	productRouter := apirouter.NewRouter()
 	productRouter.AddMethodHandlerWildcard("GET", "productId", handlers.HandleProductInfo)
