@@ -36,6 +36,7 @@ func createLambdaRouterV1() *apirouter.Router {
 
 	productRouter := apirouter.NewRouter()
 	productRouter.AddMethodHandlerWildcard("GET", "productId", handlers.HandleProductInfo)
+	productRouter.AddMethodHandlerWildcard("POST", "tickets", handlers.HandleTicketActivate)
 	router.AddRouter("product", productRouter)
 
 	specificProductRouter := apirouter.NewRouter()
