@@ -23,6 +23,7 @@ func Setup() {
 	}
 
 	setupAccessTokenSystems()
+	setupLPAccessTokenSystems()
 
 	productdynamodb.ActivateDatabase()
 
@@ -38,6 +39,19 @@ func setupAccessTokenSystems() {
 		panic(err)
 	}
 	globals.AccessTokenValidator, err = accesstokens.NewValidator(validatorConfig)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func setupLPAccessTokenSystems() {
+	var validatorLPConfig accesstokens.ValidatorConfig
+	err := configs.LoadConfig("learn_and_play_session", &validatorLPConfig, true)
+	if err != nil {
+		panic(err)
+	}
+
+	globals.AccessTokenLPValidator, err = accesstokens.NewLPValidator(validatorLPConfig)
 	if err != nil {
 		panic(err)
 	}

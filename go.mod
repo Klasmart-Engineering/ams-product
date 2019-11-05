@@ -3,6 +3,7 @@ module bitbucket.org/calmisland/product-lambda-funcs
 go 1.12
 
 require (
+	bitbucket.org/calmisland/go-server-account v1.5.0
 	bitbucket.org/calmisland/go-server-auth v1.1.0
 	bitbucket.org/calmisland/go-server-aws v1.12.0
 	bitbucket.org/calmisland/go-server-configs v1.1.0
