@@ -28,6 +28,7 @@ func createLambdaRouterV1() *apirouter.Router {
 
 	router.AddMethodHandler("GET", "content", handlers.HandleContentInfoMultiple, kidsLoopMiddlewareAuth)
 	router.AddMethodHandler("GET", "product", handlers.HandleProductInfoListByIds, kidsLoopMiddlewareAuth)
+	router.AddMethodHandler("GET", "pass", handlers.HandlePassInfoListByIds, kidsLoopMiddlewareAuth)
 
 	contentRouter := apirouter.NewRouter()
 	contentRouter.AddMethodHandlerWildcard("GET", "contentId", handlers.HandleContentInfo, kidsLoopMiddlewareAuth)
@@ -46,6 +47,11 @@ func createLambdaRouterV1() *apirouter.Router {
 	specificProductRouter := apirouter.NewRouter()
 	specificProductRouter.AddMethodHandler("GET", "icon", handlers.HandleProductIconDownload, kidsLoopMiddlewareAuth)
 	productRouter.AddRouterWildcard("productId", specificProductRouter)
+
+	passRouter := apirouter.NewRouter()
+	passRouter.AddMethodHandler("GET", "accesses", handlers.HandleAccessPassIdList, lpMiddlewareAuth)
+	passRouter.AddMethodHandlerWildcard("GET", "passId", handlers.HandlePassInfo, kidsLoopMiddlewareAuth)
+	router.AddRouter("pass", passRouter)
 
 	return router
 }
