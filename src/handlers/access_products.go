@@ -4,35 +4,62 @@ import (
 	"context"
 
 	"bitbucket.org/calmisland/go-server-product/productaccessservice"
+	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
 )
 
-type accessProductIdListResponseBody struct {
-	Products []*accessProductItem `json:"products"`
+type accessProductInfoListResponseBody struct {
+	Products []*accessProductInfo `json:"products"`
 }
 
-type accessProductItem struct {
+type accessProductInfo struct {
+	Access         bool                  `json:"access"`
 	ProductID      string                `json:"productId"`
 	ExpirationDate timeutils.EpochTimeMS `json:"expirationDate"`
 }
 
-// HandleAccessProductIdList handles product access list requests.
-func HandleAccessProductIdList(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+// HandleAccessProductInfoList handles product access info list requests.
+func HandleAccessProductInfoList(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	accountID := req.Session.Data.AccountID
 	productAccessVOList, err := productaccessservice.ProductAccessService.GetProductAccessVOListByAccountID(accountID)
 	if err != nil {
 		resp.SetServerError(err)
 	}
-	accessProductItems := make([]*accessProductItem, len(productAccessVOList))
+	accessProductItems := make([]*accessProductInfo, len(productAccessVOList))
 	for i, productAccessVO := range productAccessVOList {
-		accessProductItems[i] = &accessProductItem{
+		accessProductItems[i] = &accessProductInfo{
 			ProductID:      productAccessVO.ProductID,
 			ExpirationDate: productAccessVO.ExpirationDate,
 		}
 	}
-	resp.SetBody(&accessProductIdListResponseBody{
+	resp.SetBody(&accessProductInfoListResponseBody{
 		Products: accessProductItems,
 	})
+	return nil
+}
+
+// HandleAccessProductInfo handles product access info requests.
+func HandleAccessProductInfo(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+	productID, _ := req.GetPathParam("productId")
+	if len(productID) == 0 {
+		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+	}
+	accountID := req.Session.Data.AccountID
+	productAccessVO, err := productaccessservice.ProductAccessService.GetProductAccessVOByAccountIDProductID(accountID, productID)
+	if err != nil {
+		return err
+	} else if productAccessVO == nil {
+		resp.SetBody(&accessProductInfo{
+			Access:    false,
+			ProductID: productID,
+		})
+	} else {
+		resp.SetBody(&accessProductInfo{
+			Access:         true,
+			ProductID:      productAccessVO.ProductID,
+			ExpirationDate: productAccessVO.ExpirationDate,
+		})
+	}
 	return nil
 }
