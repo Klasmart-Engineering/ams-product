@@ -39,19 +39,24 @@ func createLambdaRouterV1() *apirouter.Router {
 	contentRouter.AddRouterWildcard("contentId", specificContentRouter)
 
 	productRouter := apirouter.NewRouter()
-	productRouter.AddMethodHandler("GET", "accesses", handlers.HandleAccessProductIdList, lpMiddlewareAuth)
+	productRouter.AddMethodHandler("GET", "accesses", handlers.HandleAccessProductInfoList, lpMiddlewareAuth)
 	productRouter.AddMethodHandlerWildcard("GET", "productId", handlers.HandleProductInfo, kidsLoopMiddlewareAuth)
 	productRouter.AddMethodHandlerWildcard("POST", "tickets", handlers.HandleTicketActivate, kidsLoopMiddlewareAuth)
 	router.AddRouter("product", productRouter)
 
 	specificProductRouter := apirouter.NewRouter()
 	specificProductRouter.AddMethodHandler("GET", "icon", handlers.HandleProductIconDownload, kidsLoopMiddlewareAuth)
+	specificProductRouter.AddMethodHandler("GET", "access", handlers.HandleAccessProductInfo, lpMiddlewareAuth)
 	productRouter.AddRouterWildcard("productId", specificProductRouter)
 
 	passRouter := apirouter.NewRouter()
-	passRouter.AddMethodHandler("GET", "accesses", handlers.HandleAccessPassIdList, lpMiddlewareAuth)
+	passRouter.AddMethodHandler("GET", "accesses", handlers.HandleAccessPassInfoList, lpMiddlewareAuth)
 	passRouter.AddMethodHandlerWildcard("GET", "passId", handlers.HandlePassInfo, kidsLoopMiddlewareAuth)
 	router.AddRouter("pass", passRouter)
+
+	specificPassRouter := apirouter.NewRouter()
+	specificPassRouter.AddMethodHandler("GET", "access", handlers.HandleAccessPassInfo, lpMiddlewareAuth)
+	passRouter.AddRouterWildcard("passId", specificPassRouter)
 
 	return router
 }
