@@ -3,10 +3,10 @@ package handlers
 import (
 	"context"
 
-	"bitbucket.org/calmisland/go-server-product/productaccessservice"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 )
 
 type accessProductInfoListResponseBody struct {
@@ -22,7 +22,7 @@ type accessProductInfo struct {
 // HandleAccessProductInfoList handles product access info list requests.
 func HandleAccessProductInfoList(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	accountID := req.Session.Data.AccountID
-	productAccessVOList, err := productaccessservice.ProductAccessService.GetProductAccessVOListByAccountID(accountID)
+	productAccessVOList, err := globals.ProductAccessService.GetProductAccessVOListByAccountID(accountID)
 	if err != nil {
 		resp.SetServerError(err)
 	}
@@ -46,7 +46,7 @@ func HandleAccessProductInfo(_ context.Context, req *apirequests.Request, resp *
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 	accountID := req.Session.Data.AccountID
-	productAccessVO, err := productaccessservice.ProductAccessService.GetProductAccessVOByAccountIDProductID(accountID, productID)
+	productAccessVO, err := globals.ProductAccessService.GetProductAccessVOByAccountIDProductID(accountID, productID)
 	if err != nil {
 		return err
 	} else if productAccessVO == nil {

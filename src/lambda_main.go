@@ -5,16 +5,18 @@ package main
 import (
 	"bitbucket.org/calmisland/go-server-aws/awslambda"
 	"bitbucket.org/calmisland/go-server-configs/configs"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/server"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/handlers"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/setup/globalsetup"
 )
 
 func main() {
 	err := configs.UpdateConfigDirectoryPath(configs.DefaultConfigFolderName)
 	if err != nil {
 		panic(err)
-	}
-	server.Setup()
-	initLambdaFunctions()
+
+
+	globalsetup.Setup()
+	rootRouter := handlers.InitializeRoutes()
 
 	err = awslambda.StartAPIHandler(rootRouter)
 	if err != nil {
