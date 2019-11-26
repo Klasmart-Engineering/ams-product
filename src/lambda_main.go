@@ -13,7 +13,7 @@ func main() {
 	err := configs.UpdateConfigDirectoryPath(configs.DefaultConfigFolderName)
 	if err != nil {
 		panic(err)
-
+	}
 
 	globalsetup.Setup()
 	rootRouter := handlers.InitializeRoutes()
