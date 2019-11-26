@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 
-	"bitbucket.org/calmisland/go-server-product/passservice"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 )
 
 type passInfoListResponseBody struct {
@@ -24,7 +24,7 @@ func HandlePassInfoListByIds(ctx context.Context, req *apirequests.Request, resp
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	passVOList, err := passservice.PassService.GetPassVOListByIds(passIDs)
+	passVOList, err := globals.PassService.GetPassVOListByIds(passIDs)
 	if err != nil {
 		return resp.SetServerError(err)
 	}
@@ -51,7 +51,7 @@ func HandlePassInfo(ctx context.Context, req *apirequests.Request, resp *apirequ
 		return resp.SetClientError(apierrors.ErrorInvalidParameters.WithField("passId"))
 	}
 
-	passVO, err := passservice.PassService.GetPassVOByPassID(passID)
+	passVO, err := globals.PassService.GetPassVOByPassID(passID)
 	if err != nil {
 		return resp.SetServerError(err)
 	} else if passVO == nil {

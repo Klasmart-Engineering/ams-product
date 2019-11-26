@@ -10,6 +10,7 @@ import (
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
@@ -48,7 +49,7 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 		productIDs = strings.Split(productIDs[0], ",")
 	}
 
-	productVOList, err := productservice.ProductService.GetProductVOListByIds(productIDs)
+	productVOList, err := globals.ProductService.GetProductVOListByIds(productIDs)
 	if err != nil {
 		return resp.SetServerError(err)
 	}
@@ -80,7 +81,7 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	productVO, err := productservice.ProductService.GetProductVOByProductID(productID)
+	productVO, err := globals.ProductService.GetProductVOByProductID(productID)
 	if err != nil {
 		return resp.SetServerError(err)
 	} else if productVO == nil {

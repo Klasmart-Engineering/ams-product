@@ -9,6 +9,7 @@ import (
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
@@ -38,7 +39,7 @@ func HandleContentInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	contentVO, err := contentservice.ContentService.GetContentVOByContentID(contentID)
+	contentVO, err := globals.ContentService.GetContentVOByContentID(contentID)
 	if err != nil {
 		return resp.SetServerError(err)
 	}
@@ -64,7 +65,7 @@ func HandleContentInfoMultiple(ctx context.Context, req *apirequests.Request, re
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 
-	contentVOList, err := contentservice.ContentService.GetContentVOListByIds(contentIDs)
+	contentVOList, err := globals.ContentService.GetContentVOListByIds(contentIDs)
 	if err != nil {
 		return resp.SetServerError(err)
 	}

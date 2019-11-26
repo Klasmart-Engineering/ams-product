@@ -3,10 +3,10 @@ package handlers
 import (
 	"context"
 
-	"bitbucket.org/calmisland/go-server-product/passaccessservice"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 )
 
 type accessPassInfoListResponseBody struct {
@@ -22,7 +22,7 @@ type accessPassInfo struct {
 // HandleAccessPassInfoList handles pass access info list requests.
 func HandleAccessPassInfoList(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	accountID := req.Session.Data.AccountID
-	passAccessVOList, err := passaccessservice.PassAccessService.GetPassAccessVOListByAccountID(accountID)
+	passAccessVOList, err := globals.PassAccessService.GetPassAccessVOListByAccountID(accountID)
 	if err != nil {
 		resp.SetServerError(err)
 	}
@@ -47,7 +47,7 @@ func HandleAccessPassInfo(_ context.Context, req *apirequests.Request, resp *api
 		return resp.SetClientError(apierrors.ErrorInvalidParameters)
 	}
 	accountID := req.Session.Data.AccountID
-	passAccessVO, err := passaccessservice.PassAccessService.GetPassAccessVOByAccountIDPassID(accountID, passID)
+	passAccessVO, err := globals.PassAccessService.GetPassAccessVOByAccountIDPassID(accountID, passID)
 	if err != nil {
 		return err
 	} else if passAccessVO == nil {
