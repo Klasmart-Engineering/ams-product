@@ -42,6 +42,8 @@ func HandleContentInfo(ctx context.Context, req *apirequests.Request, resp *apir
 	contentVO, err := globals.ContentService.GetContentVOByContentID(contentID)
 	if err != nil {
 		return resp.SetServerError(err)
+	} else if contentVO == nil {
+		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
 
 	kidsAppInfo := convertContentKidsAppInfoFromService(contentVO.KidsAppInfo)
