@@ -13,12 +13,17 @@ import (
 	"bitbucket.org/calmisland/go-server-product/productservice"
 	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
 // Setup Setup
 func Setup() {
 	// Setup the Slack reporter first
 	setupSlackReporter()
+
+	if err := services.InitializeFromConfigs(); err != nil {
+		panic(err)
+	}
 
 	setupProductDatabase()
 	setupProductService()
