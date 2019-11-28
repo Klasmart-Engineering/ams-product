@@ -29,6 +29,7 @@ func HandleAccessProductInfoList(_ context.Context, req *apirequests.Request, re
 	accessProductItems := make([]*accessProductInfo, len(productAccessVOList))
 	for i, productAccessVO := range productAccessVOList {
 		accessProductItems[i] = &accessProductInfo{
+			Access:         true,
 			ProductID:      productAccessVO.ProductID,
 			ExpirationDate: productAccessVO.ExpirationDate,
 		}
