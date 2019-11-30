@@ -5,26 +5,29 @@ import (
 	"github.com/calmisland/go-errors"
 )
 
-type productConfig struct {
-	CacheExpireMinutes int32     `json:"cacheExpireMinutes"`
-	DownloadBaseURL    string    `json:"downloadBaseUrl"`
-	Signing            *signInfo `json:"signing"`
+// ProductConfig is configuration for products.
+type ProductConfig struct {
+	DownloadBaseURL string    `json:"downloadBaseUrl"`
+	Signing         *SignInfo `json:"signing"`
 }
 
 var (
-	config productConfig
+	productConfig ProductConfig
 )
+
+// Initialize Initialize
+func Initialize(config ProductConfig) error {
+	productConfig = config
+	return initSignedUrls()
+}
 
 // InitializeFromConfigs InitializeFromConfigs
 func InitializeFromConfigs() error {
+	var config ProductConfig
 	err := configs.LoadConfig("product", &config, true)
 	if err != nil {
 		return errors.Wrap(err, "Failed to read the product configuration file")
 	}
 
-	if config.CacheExpireMinutes == 0 {
-		config.CacheExpireMinutes = 15
-	}
-
-	return initSignedUrls()
+	return Initialize(config)
 }

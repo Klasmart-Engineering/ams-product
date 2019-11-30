@@ -1,5 +1,4 @@
 {
-    "cacheExpireMinutes": 1,
     "downloadBaseUrl": "https://s3.ap-northeast-2.amazonaws.com/badanamu-curriculum-dev/",
     "signing": {
         "aws_cloudfront": null,
