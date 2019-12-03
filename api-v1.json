@@ -1,0 +1,879 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Product API",
+        "version": "1.0",
+        "description": "The RESTful product service."
+    },
+    "servers": [
+        {
+            "url": "https://prod.product.badanamu.net/v1",
+            "description": "The production product service."
+        },
+        {
+            "url": "https://prod-test.product.badanamu.net/v1",
+            "description": "The test production product service."
+        },
+        {
+            "url": "https://beta.product.badanamu.net/v1",
+            "description": "The beta staging product service."
+        },
+        {
+            "url": "https://product.internal.badanamu.net/v1",
+            "description": "The in-house product service."
+        }
+    ],
+    "components": {
+        "schemas": {
+            "APIError": {
+                "type": "object",
+                "description": "An API error.",
+                "required": ["errCode"],
+                "properties": {
+                    "errCode": {
+                        "type": "integer",
+                        "description": "The code of the error."
+                    },
+                    "errName": {
+                        "type": "string",
+                        "description": "The name of the error."
+                    },
+                    "errMessage": {
+                        "type": "string",
+                        "description": "The error message."
+                    },
+                    "errField": {
+                        "type": "string",
+                        "description": "The name of the field that generated the error."
+                    },
+                    "errValue": {
+                        "type": "integer",
+                        "description": "Any value associated with the error."
+                    },
+                    "errParams": {
+                        "type": "object",
+                        "description": "Any parameters associated with the error."
+                    }
+                }
+            },
+            "ContentInfo": {
+                "type": "object",
+                "description": "Content information.",
+                "required": ["id","productId","title","type","updateTm"],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The content ID."
+                    },
+                    "productId": {
+                        "type": "string",
+                        "description": "The parent product ID."
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "The content title."
+                    },
+                    "type": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "The content type."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The content description."
+                    },
+                    "kidsAppInfo": {
+                        "type": "object",
+                        "description": "The Kids App content information.",
+                        "properties": {
+                            "contentId": {
+                                "type": "string",
+                                "description": "The Kids App content ID."
+                            },
+                            "contentType": {
+                                "type": "string",
+                                "description": "The Kids App content type."
+                            }
+                        }
+                    },
+                    "updateTm": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The epoch timestamp in milliseconds when this content information was last updated."
+                    }
+                }
+            },
+            "ProductInfo": {
+                "type": "object",
+                "description": "Product information.",
+                "required": ["prodId","title","type"],
+                "properties": {
+                    "prodId": {
+                        "type": "string",
+                        "description": "The product ID."
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "The product title."
+                    },
+                    "type": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "The product type."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The product description."
+                    },
+                    "appInfo": {
+                        "type": "object",
+                        "description": "The product application information.",
+                        "properties": {
+                            "appStore": {
+                                "$ref": "#/components/schemas/ProductAppInfo",
+                                "description": "The Apple App Store application information."
+                            },
+                            "googlePlay": {
+                                "$ref": "#/components/schemas/ProductAppInfo",
+                                "description": "The Google Play Store application information."
+                            }
+                        }
+                    },
+                    "updateTm": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The epoch timestamp in milliseconds when this product information was last updated."
+                    }
+                }
+            },
+            "ProductAppInfo": {
+                "type": "object",
+                "description": "Product application information.",
+                "required": ["appId","storeUrl"],
+                "properties": {
+                    "appId": {
+                        "type": "string",
+                        "description": "The application bundle identifier."
+                    },
+                    "storeUrl": {
+                        "type": "string",
+                        "description": "The application store URL."
+                    }
+                }
+            },
+            "PassInfo": {
+                "type": "object",
+                "description": "Pass information.",
+                "required": ["passId","productIds"],
+                "properties": {
+                    "passId": {
+                        "type": "string",
+                        "description": "The pass ID."
+                    },
+                    "productIds": {
+                        "type": "array",
+                        "description": "The list of product ID that this pass grants access to.",
+                        "items": {
+                            "type": "string",
+                            "description": "The product ID."
+                        }
+                    }
+                }
+            },
+            "ProductAccessInfo": {
+                "type": "object",
+                "description": "Product access information.",
+                "required": ["access","productId"],
+                "properties": {
+                    "access": {
+                        "type": "boolean",
+                        "description": "If access is granted to this product."
+                    },
+                    "productId": {
+                        "type": "string",
+                        "description": "The product ID."
+                    },
+                    "expirationDate": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The epoch timestamp in milliseconds when this product access expires. If this is missing or is 0 then it will never expire."
+                    }
+                }
+            },
+            "PassAccessInfo": {
+                "type": "object",
+                "description": "Pass access information.",
+                "required": ["access","passId"],
+                "properties": {
+                    "access": {
+                        "type": "boolean",
+                        "description": "If access is granted to this pass."
+                    },
+                    "passId": {
+                        "type": "string",
+                        "description": "The pass ID."
+                    },
+                    "expirationDate": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The epoch timestamp in milliseconds when this pass access expires. If this is missing or is 0 then it will never expire."
+                    }
+                }
+            }
+        },
+        "responses": {
+            "400BadRequest": {
+                "description": "An input query parameter, part of the URL or the request body is invalid.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/APIError"
+                        }
+                    }
+                }
+            },
+            "401Unauthorized": {
+                "description": "You are not authorized to perform an action or to access a resource. Make sure that you are using a valid access token.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/APIError"
+                        }
+                    }
+                }
+            },
+            "403Forbidden": {
+                "description": "You are forbidden to perform an action or to access a resource.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "CIT"
+            }
+        }
+    },
+    "paths": {
+        "/content": {
+            "get": {
+                "operationId": "getContentInfoMultiple",
+                "summary": "Get Multiple Content Information",
+                "description": "Retrievs information about multiple contents.",
+                "tags": ["content"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The content ID.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the content information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "contents": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ContentInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/content/{contentId}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "contentId",
+                    "description": "The content ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getContentInfo",
+                "summary": "Get Content Information",
+                "description": "Retrievs information about a specific content.",
+                "tags": ["content"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the content information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContentInfo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/content/{contentId}/icon": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "contentId",
+                    "description": "The content ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getContentIcon",
+                "summary": "Get Content Icon",
+                "description": "Retrievs the icon for a specific content.",
+                "tags": ["content"],
+                "responses": {
+                    "307": {
+                        "description": "Successful redirection to the icon."
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/product": {
+            "get": {
+                "operationId": "getProductInfoMultiple",
+                "summary": "Get Multiple Product Information",
+                "description": "Retrievs information about multiple products.",
+                "tags": ["product"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The product ID.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the product information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "products": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProductInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/product/accesses": {
+            "get": {
+                "operationId": "getAllProductAccesses",
+                "summary": "Get All Product Accesses",
+                "description": "Retrievs all access information for products.",
+                "tags": ["product"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the product access information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "products": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProductAccessInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/product/{productId}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "productId",
+                    "description": "The product ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getProductInfo",
+                "summary": "Get Product Information",
+                "description": "Retrievs information about a specific product.",
+                "tags": ["product"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the product information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductInfo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/product/{productId}/icon": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "productId",
+                    "description": "The product ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getProductIcon",
+                "summary": "Get Product Icon",
+                "description": "Retrievs the icon for a specific product.",
+                "tags": ["product"],
+                "responses": {
+                    "307": {
+                        "description": "Successful redirection to the icon."
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/product/{productId}/access": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "productId",
+                    "description": "The product ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getProductAccess",
+                "summary": "Get Product Access",
+                "description": "Retrievs access information for a specific product.",
+                "tags": ["product"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the product access information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductAccessInfo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pass": {
+            "get": {
+                "operationId": "getPassInfoMultiple",
+                "summary": "Get Multiple Pass Information",
+                "description": "Retrievs information about multiple passes.",
+                "tags": ["pass"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The pass ID.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the pass information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "passes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PassInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pass/accesses": {
+            "get": {
+                "operationId": "getAllPassAccesses",
+                "summary": "Get All Pass Accesses",
+                "description": "Retrievs all access information for passes.",
+                "tags": ["pass"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the pass access information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "passes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PassAccessInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pass/{passId}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "passId",
+                    "description": "The pass ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getPassInfo",
+                "summary": "Get Pass Information",
+                "description": "Retrievs information about a specific pass.",
+                "tags": ["pass"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the pass information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PassInfo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pass/{passId}/access": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "passId",
+                    "description": "The pass ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getPassAccess",
+                "summary": "Get Pass Access",
+                "description": "Retrievs access information for a specific pass.",
+                "tags": ["pass"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the pass access information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PassAccessInfo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/serverinfo": {
+            "get": {
+                "operationId": "getServerInfo",
+                "summary": "Get Server Info",
+                "description": "Gets information about the server.",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "X-Calmid-Debug",
+                        "description": "Used to return debug information from the server.",
+                        "example": "enable",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": ["info"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the server information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["region","stage"],
+                                    "properties": {
+                                        "region": {
+                                            "type": "string",
+                                            "description": "The region that the server is hosted in.",
+                                            "example": "oregon"
+                                        },
+                                        "stage": {
+                                            "type": "string",
+                                            "description": "The stage that the server is deployed in.",
+                                            "example": "prod"
+                                        },
+                                        "serviceName": {
+                                            "type": "string",
+                                            "description": "The name of the service.",
+                                            "example": "auth"
+                                        },
+                                        "buildDate": {
+                                            "type": "string",
+                                            "description": "The date the server process was built.",
+                                            "example": "2019-11-25 01:18:00 +KST"
+                                        },
+                                        "buildReleaseName": {
+                                            "type": "string",
+                                            "description": "The name of the build release for the server process.",
+                                            "example": "v1.0.0"
+                                        },
+                                        "gitBranch": {
+                                            "type": "string",
+                                            "description": "The name of the Git branch that built the server process.",
+                                            "example": "prod"
+                                        },
+                                        "gitCommitHash": {
+                                            "type": "string",
+                                            "description": "The Git commit hash that the server process was build from.",
+                                            "example": "a5845227cf7216d440d524f41b5e6b66d72deb8a"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

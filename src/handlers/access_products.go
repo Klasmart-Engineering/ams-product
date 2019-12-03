@@ -16,7 +16,7 @@ type accessProductInfoListResponseBody struct {
 type accessProductInfo struct {
 	Access         bool                  `json:"access"`
 	ProductID      string                `json:"productId"`
-	ExpirationDate timeutils.EpochTimeMS `json:"expirationDate"`
+	ExpirationDate timeutils.EpochTimeMS `json:"expirationDate,omitempty"`
 }
 
 // HandleAccessProductInfoList handles product access info list requests.

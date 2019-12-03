@@ -22,7 +22,7 @@ type contentInfoResponseBody struct {
 	ProductID   string                  `json:"productId"`
 	Title       string                  `json:"title"`
 	Type        productdata.ContentType `json:"type"`
-	Description string                  `json:"description"`
+	Description string                  `json:"description,omitempty"`
 	KidsAppInfo *kidsAppContentInfo     `json:"kidsAppInfo,omitempty"`
 	UpdatedDate timeutils.EpochTimeMS   `json:"updateTm"`
 }

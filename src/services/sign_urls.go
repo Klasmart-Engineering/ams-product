@@ -12,18 +12,21 @@ import (
 	"github.com/calmisland/go-errors"
 )
 
-type signInfo struct {
-	AWSCloudFront *signInfoAWSCloudFront `json:"aws_cloudfront"`
-	AWSS3         *signInfoAWSS3         `json:"aws_s3"`
+// SignInfo is signing information.
+type SignInfo struct {
+	AWSCloudFront *SignInfoAWSCloudFront `json:"aws_cloudfront"`
+	AWSS3         *SignInfoAWSS3         `json:"aws_s3"`
 }
 
-type signInfoAWSCloudFront struct {
+// SignInfoAWSCloudFront is information for signing CloudFront requests.
+type SignInfoAWSCloudFront struct {
 	KeyID          string `json:"keyId"`
 	PrivateKey     string `json:"privateKey"`
 	PrivateKeyPath string `json:"privateKeyPath"`
 }
 
-type signInfoAWSS3 struct {
+// SignInfoAWSS3 is information for signing S3 requests.
+type SignInfoAWSS3 struct {
 	Region string `json:"region"`
 }
 
@@ -32,19 +35,19 @@ var (
 )
 
 func initSignedUrls() error {
-	if config.Signing == nil {
+	if productConfig.Signing == nil {
 		return nil
 	}
 
-	if config.Signing.AWSCloudFront != nil {
-		return setupAWSCloudFrontSigning(config.Signing.AWSCloudFront)
-	} else if config.Signing.AWSS3 != nil {
-		return setupAWSS3Signing(config.Signing.AWSS3)
+	if productConfig.Signing.AWSCloudFront != nil {
+		return setupAWSCloudFrontSigning(productConfig.Signing.AWSCloudFront)
+	} else if productConfig.Signing.AWSS3 != nil {
+		return setupAWSS3Signing(productConfig.Signing.AWSS3)
 	}
 	return nil
 }
 
-func setupAWSCloudFrontSigning(signInfo *signInfoAWSCloudFront) error {
+func setupAWSCloudFrontSigning(signInfo *SignInfoAWSCloudFront) error {
 	if len(signInfo.KeyID) == 0 {
 		return errors.New("Missing AWS CloudFront key ID for product URL signing")
 	}
@@ -69,7 +72,7 @@ func setupAWSCloudFrontSigning(signInfo *signInfoAWSCloudFront) error {
 	return nil
 }
 
-func setupAWSS3Signing(signInfo *signInfoAWSS3) error {
+func setupAWSS3Signing(signInfo *SignInfoAWSS3) error {
 	if len(signInfo.Region) == 0 {
 		return errors.New("Missing AWS S3 region for product URL signing")
 	}

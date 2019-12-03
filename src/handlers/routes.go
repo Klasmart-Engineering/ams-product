@@ -3,6 +3,7 @@ package handlers
 import (
 	"bitbucket.org/calmisland/go-server-auth/authmiddlewares"
 	"bitbucket.org/calmisland/go-server-requests/apirouter"
+	"bitbucket.org/calmisland/go-server-requests/standardhandlers"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 )
 
@@ -24,8 +25,7 @@ func InitializeRoutes() *apirouter.Router {
 
 func createLambdaRouterV1() *apirouter.Router {
 	router := apirouter.NewRouter()
-
-	router.AddMethodHandler("GET", "serverinfo", HandleServerInfo)
+	router.AddMethodHandler("GET", "serverinfo", standardhandlers.HandleServerInfo)
 
 	requireAuthMiddleware := authmiddlewares.ValidateSession(globals.AccessTokenValidator, true)
 
@@ -46,7 +46,6 @@ func createLambdaRouterV1() *apirouter.Router {
 	productRouter.AddMiddleware(requireAuthMiddleware)
 	productRouter.AddMethodHandler("GET", "accesses", HandleAccessProductInfoList)
 	productRouter.AddMethodHandlerWildcard("GET", "productId", HandleProductInfo)
-	productRouter.AddMethodHandlerWildcard("POST", "tickets", HandleTicketActivate)
 	router.AddRouter("product", productRouter)
 
 	specificProductRouter := apirouter.NewRouter()

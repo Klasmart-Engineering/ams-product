@@ -1,5 +1,4 @@
 {
-    "cacheExpireMinutes": 15,
     "downloadBaseUrl": "https://curriculum-cdn.badanamu.net/",
     "signing": {
         "aws_cloudfront": {

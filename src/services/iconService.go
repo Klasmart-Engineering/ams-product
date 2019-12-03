@@ -17,7 +17,7 @@ const (
 func GetContentIconURL(contentID string) (string, error) {
 	contentID = url.PathEscape(contentID)
 	iconFileName := fmt.Sprintf("%s.png", contentID)
-	iconURL := urlutils.JoinURL(config.DownloadBaseURL, "icons/contents", iconFileName)
+	iconURL := urlutils.JoinURL(productConfig.DownloadBaseURL, "icons/contents", iconFileName)
 	urlExpireTime := time.Now().Add(iconDownloadURLDuration)
 
 	return signURL(iconURL, urlsign.SignOptions{
@@ -29,7 +29,7 @@ func GetContentIconURL(contentID string) (string, error) {
 func GetProductIconURL(productID string) (string, error) {
 	productID = url.PathEscape(productID)
 	iconFileName := fmt.Sprintf("%s.png", productID)
-	iconURL := urlutils.JoinURL(config.DownloadBaseURL, "icons/products", iconFileName)
+	iconURL := urlutils.JoinURL(productConfig.DownloadBaseURL, "icons/products", iconFileName)
 	urlExpireTime := time.Now().Add(iconDownloadURLDuration)
 
 	return signURL(iconURL, urlsign.SignOptions{
