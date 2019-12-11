@@ -36,3 +36,15 @@ func GetProductIconURL(productID string) (string, error) {
 		Expires: urlExpireTime,
 	})
 }
+
+// GetPassIconURL returns the URL for a specific pass icon.
+func GetPassIconURL(passID string) (string, error) {
+	passID = url.PathEscape(passID)
+	iconFileName := fmt.Sprintf("%s.png", passID)
+	iconURL := urlutils.JoinURL(productConfig.DownloadBaseURL, "icons/passes", iconFileName)
+	urlExpireTime := time.Now().Add(iconDownloadURLDuration)
+
+	return signURL(iconURL, urlsign.SignOptions{
+		Expires: urlExpireTime,
+	})
+}

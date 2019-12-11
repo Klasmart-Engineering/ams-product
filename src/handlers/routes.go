@@ -64,6 +64,7 @@ func createLambdaRouterV1() *apirouter.Router {
 	router.AddRouter("pass", passRouter)
 
 	specificPassRouter := apirouter.NewRouter()
+	specificPassRouter.AddMethodHandler("GET", "icon", HandlePassIconDownload)
 	specificPassRouter.AddMethodHandler("GET", "access", HandleAccessPassInfo)
 	passRouter.AddRouterWildcard("passId", specificPassRouter)
 

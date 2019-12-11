@@ -11,7 +11,7 @@ import (
 	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens/accesstokensmock"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
-	"github.com/stretchr/testify/mock"
+	"github.com/calmisland/go-testify/mock"
 )
 
 // Setup Setup
