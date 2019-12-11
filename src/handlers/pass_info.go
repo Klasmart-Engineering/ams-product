@@ -3,9 +3,11 @@ package handlers
 import (
 	"context"
 
+	"bitbucket.org/calmisland/go-server-product/productid"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
 )
 
 type passInfoListResponseBody struct {
@@ -63,5 +65,26 @@ func HandlePassInfo(ctx context.Context, req *apirequests.Request, resp *apirequ
 		ProductIDs: passVO.Products,
 	}
 	resp.SetBody(&response)
+	return nil
+}
+
+// HandlePassIconDownload handles downloading pass icons.
+func HandlePassIconDownload(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+	passID, _ := req.GetPathParam("passId")
+	if len(passID) == 0 {
+		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+	}
+
+	passID, err := productid.GetPassIDShortPrefix(passID)
+	if err != nil {
+		return resp.SetClientError(apierrors.ErrorInputInvalidFormat)
+	}
+
+	fileURL, err := services.GetPassIconURL(passID)
+	if err != nil {
+		return resp.SetServerError(err)
+	}
+
+	resp.Redirect(fileURL)
 	return nil
 }
