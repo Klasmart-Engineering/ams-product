@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 
+	"bitbucket.org/calmisland/go-server-product/passes"
 	"bitbucket.org/calmisland/go-server-product/productid"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
@@ -15,8 +16,11 @@ type passInfoListResponseBody struct {
 }
 
 type passInfoResponseBody struct {
-	PassID     string   `json:"passId"`
-	ProductIDs []string `json:"productIds"`
+	PassID     string              `json:"passId"`
+	ProductIDs []string            `json:"productIds"`
+	Price      string              `json:"price"`
+	Currency   passes.Currency     `json:"currency"`
+	Duration   passes.DurationDays `json:"duration"`
 }
 
 // HandlePassInfoListByIds handles pass information list requests.
@@ -33,9 +37,16 @@ func HandlePassInfoListByIds(ctx context.Context, req *apirequests.Request, resp
 
 	passes := make([]*passInfoResponseBody, len(passVOList))
 	for i, passVO := range passVOList {
+		price, err := passVO.Price.ToString(passVO.Currency)
+		if err != nil {
+			return resp.SetServerError(err)
+		}
 		passes[i] = &passInfoResponseBody{
 			PassID:     passVO.PassID,
 			ProductIDs: passVO.Products,
+			Price:      price,
+			Currency:   passVO.Currency,
+			Duration:   passVO.Duration,
 		}
 	}
 
@@ -59,10 +70,16 @@ func HandlePassInfo(ctx context.Context, req *apirequests.Request, resp *apirequ
 	} else if passVO == nil {
 		return resp.SetClientError(apierrors.ErrorItemNotFound)
 	}
-
+	price, err := passVO.Price.ToString(passVO.Currency)
+	if err != nil {
+		return resp.SetServerError(err)
+	}
 	response := passInfoResponseBody{
 		PassID:     passVO.PassID,
 		ProductIDs: passVO.Products,
+		Price:      price,
+		Currency:   passVO.Currency,
+		Duration:   passVO.Duration,
 	}
 	resp.SetBody(&response)
 	return nil

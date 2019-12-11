@@ -177,6 +177,18 @@
                             "type": "string",
                             "description": "The product ID."
                         }
+                    },
+                    "price": {
+                        "type": "string",
+                        "description": "The price of a pass, in the related currency."
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "description": "The duration, in days, of a pass."
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "The price currency of a pass."
                     }
                 }
             },

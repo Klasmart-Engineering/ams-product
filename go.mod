@@ -8,7 +8,7 @@ require (
 	bitbucket.org/calmisland/go-server-aws v1.14.0
 	bitbucket.org/calmisland/go-server-configs v1.1.1
 	bitbucket.org/calmisland/go-server-logs v1.2.1
-	bitbucket.org/calmisland/go-server-product v1.9.1
+	bitbucket.org/calmisland/go-server-product v1.9.2
 	bitbucket.org/calmisland/go-server-reference-data v1.2.0
 	bitbucket.org/calmisland/go-server-requests v1.15.1
 	bitbucket.org/calmisland/go-server-utils v1.9.0
