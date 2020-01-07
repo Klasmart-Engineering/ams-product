@@ -20,8 +20,8 @@ bitbucket.org/calmisland/go-server-logs v1.2.1 h1:Xzagw9xdl0gjKmy8QCfpmyP0ousmAs
 bitbucket.org/calmisland/go-server-logs v1.2.1/go.mod h1:mUMqv4QAFdQ62ifv2X4ZhYB690Am7GFUfFxnMx0rKbg=
 bitbucket.org/calmisland/go-server-messages v1.0.0 h1:PVAeVufoJkpaGN4/brXFFpftFWN5TP25SoQwXWhNGxE=
 bitbucket.org/calmisland/go-server-messages v1.0.0/go.mod h1:hX/7VafBPPFRDcrgrXLjXpAWor4oRazRhbAtnEr9zOs=
-bitbucket.org/calmisland/go-server-product v1.9.1 h1:pByM29gc5rvOJTABGGRZOyqdVVUErKrJi/OtL86aEt8=
-bitbucket.org/calmisland/go-server-product v1.9.1/go.mod h1:jw5twi2T47uPpmjKMDr8xvPnM2VkZNCw84yDc1ayD1k=
+bitbucket.org/calmisland/go-server-product v1.9.2 h1:C/bNkiZ2Xqx/YT1sO2LOaP8pF9YUYIAYo/hEe6z/kjM=
+bitbucket.org/calmisland/go-server-product v1.9.2/go.mod h1:RXzXUPTw6dyuJlpGNhMRzjc0gmt3X5MurQGgBRhSAKc=
 bitbucket.org/calmisland/go-server-queues v1.0.1 h1:pekU2mv+yvEpojw4sgIz1ej1f3aP2NtZQybh3iOyzrk=
 bitbucket.org/calmisland/go-server-queues v1.0.1/go.mod h1:5Nf1TqYrkjgTEtk4TSWU0SS+TWY4rrDJDqz2vC4cYqs=
 bitbucket.org/calmisland/go-server-reference-data v1.2.0 h1:EcuFvDMbOjQ7GSJNdyfvAyjOM+mVLmuSan6QPHPf/dc=
@@ -50,6 +50,8 @@ github.com/aws/aws-sdk-go v1.19.41/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpi
 github.com/aws/aws-sdk-go v1.25.22/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.25.24 h1:E8b33GQlfNuMumepuWhpSX+Mw71cEQK1BQaKzVBl3js=
 github.com/aws/aws-sdk-go v1.25.24/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/calmisland/go-decimal v1.1.1 h1:1G79MfJG7gYtN6ZSNqm66VkU3punrmi8pT2zQUA8LtY=
+github.com/calmisland/go-decimal v1.1.1/go.mod h1:uWpOFfnuz9OELUu6XdMsoTSBIap4iOkah5VeNchvVL0=
 github.com/calmisland/go-difflib v1.0.1 h1:tfci468YtnjTC0pUOKRmnmpImkC2Z9siy4z94XM9bM0=
 github.com/calmisland/go-difflib v1.0.1/go.mod h1:xvL8JWRWveQaQ9qymwmu4Rq05T5HzvHMqHtWi6eVUhI=
 github.com/calmisland/go-errors v0.9.2 h1:g0Ddzr5czzrJic5dUXketjrMBD30qnZ+gePicskpKVQ=
