@@ -231,6 +231,20 @@
                         "description": "The epoch timestamp in milliseconds when this pass access expires. If this is missing or is 0 then it will never expire."
                     }
                 }
+            },
+            "TicketRegion": {
+                "type": "object",
+                "description": "Ticket region.",
+                "properties": {
+                    "region": {
+                        "type": "string",
+                        "description": "The region name."
+                    },
+                    "stage": {
+                        "type": "string",
+                        "description": "The stage name."
+                    }
+                }
             }
         },
         "responses": {
@@ -835,6 +849,51 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/PassAccessInfo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ticket/{ticketId}/region": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "ticketId",
+                    "description": "The ticket ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getTicketRegion",
+                "summary": "Get Ticket Region",
+                "description": "Retrievs region about a specific ticket.",
+                "tags": ["ticket"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the ticket region.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TicketRegion"
                                 }
                             }
                         }
