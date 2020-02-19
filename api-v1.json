@@ -225,6 +225,12 @@
                         "type": "string",
                         "description": "The pass ID."
                     },
+                    "products": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductAccessInfo"
+                        }
+                    },
                     "expirationDate": {
                         "type": "integer",
                         "format": "int64",
@@ -718,6 +724,12 @@
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/PassAccessInfo"
+                                            }
+                                        },
+                                        "products": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProductAccessInfo"
                                             }
                                         }
                                     }
