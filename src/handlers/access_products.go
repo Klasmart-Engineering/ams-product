@@ -24,7 +24,7 @@ func HandleAccessProductInfoList(_ context.Context, req *apirequests.Request, re
 	accountID := req.Session.Data.AccountID
 	productAccessVOList, err := globals.ProductAccessService.GetProductAccessVOListByAccountID(accountID)
 	if err != nil {
-		resp.SetServerError(err)
+		return resp.SetServerError(err)
 	}
 	accessProductItems := make([]*accessProductInfo, len(productAccessVOList))
 	for i, productAccessVO := range productAccessVOList {
