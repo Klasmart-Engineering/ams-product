@@ -245,10 +245,16 @@
                     "region": {
                         "type": "string",
                         "description": "The region name."
-                    },
-                    "stage": {
+                    }
+                }
+            },
+            "EventTicketRegion": {
+                "type": "object",
+                "description": "Event Ticket region.",
+                "properties": {
+                    "region": {
                         "type": "string",
-                        "description": "The stage name."
+                        "description": "The region name."
                     }
                 }
             }
@@ -906,6 +912,51 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/TicketRegion"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/eventTicket/{eventId}/region": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "eventId",
+                    "description": "The event ticket ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getEventTicketRegion",
+                "summary": "Get Event Ticket Region",
+                "description": "Retrievs region about a specific event ticket.",
+                "tags": ["eventTicket"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the event ticket region.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EventTicketRegion"
                                 }
                             }
                         }

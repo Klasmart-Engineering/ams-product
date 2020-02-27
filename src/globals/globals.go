@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"bitbucket.org/calmisland/go-server-product/contentservice"
+	"bitbucket.org/calmisland/go-server-product/eventticketregionservice"
 	"bitbucket.org/calmisland/go-server-product/passaccessservice"
 	"bitbucket.org/calmisland/go-server-product/passservice"
 	"bitbucket.org/calmisland/go-server-product/productaccessservice"
@@ -35,6 +36,9 @@ var (
 	// PassAccessService PassAccessService
 	PassAccessService passaccessservice.IPassAccessService
 
+	// EventTicketRegionService EventTicketRegionService
+	EventTicketRegionService eventticketregionservice.IService
+
 	// ContentService ContentService
 	ContentService contentservice.IContentService
 )
@@ -55,6 +59,8 @@ func Verify() {
 		panic(errors.New("The pass access service has not been set"))
 	} else if ContentService == nil {
 		panic(errors.New("The content service has not been set"))
+	} else if EventTicketRegionService == nil {
+		panic(errors.New("The event ticket region service has not been set"))
 	} else if CORSOptions == nil {
 		panic(errors.New("The CORS definition has not been set"))
 	}

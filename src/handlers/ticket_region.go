@@ -9,8 +9,7 @@ import (
 )
 
 type ticketRegionResponseBody struct {
-	Region string `json:"region"`
-	Stage  string `json:"stage"`
+	RegionID string `json:"regionId"`
 }
 
 // HandleTicketRegion handles ticket region requests.
@@ -20,21 +19,15 @@ func HandleTicketRegion(ctx context.Context, req *apirequests.Request, resp *api
 		return resp.SetClientError(apierrors.ErrorInvalidParameters.WithField("ticketId"))
 	}
 
-	ticketStage := ticketID[len(ticketID)-serverinfo.ShortStageSize : len(ticketID)]
-	ticketRegion := ticketID[len(ticketID)-serverinfo.ShortStageSize-serverinfo.ShortRegionSize : len(ticketID)-serverinfo.ShortStageSize]
+	ticketRegion := ticketID[len(ticketID)-serverinfo.ShortRegionSize : len(ticketID)]
 
-	stage, err := serverinfo.GetStageNameOfShortName(ticketStage)
-	if err != nil {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters.WithField("ticketId"))
-	}
-	region, err := serverinfo.GetRegionNameOfShortName(ticketRegion)
+	regionID, err := serverinfo.GetRegionNameOfShortName(ticketRegion)
 	if err != nil {
 		return resp.SetClientError(apierrors.ErrorInvalidParameters.WithField("ticketId"))
 	}
 
 	resp.SetBody(&ticketRegionResponseBody{
-		Region: region,
-		Stage:  stage,
+		RegionID: regionID,
 	})
 
 	return nil
