@@ -33,12 +33,11 @@ func createLambdaRouterV1() *apirouter.Router {
 
 	requireAuthMiddleware := authmiddlewares.ValidateSession(globals.AccessTokenValidator, true)
 
-	router.AddMethodHandler("GET", "content", HandleContentInfoMultiple, requireAuthMiddleware)
-	router.AddMethodHandler("GET", "product", HandleProductInfoListByIds, requireAuthMiddleware)
-	router.AddMethodHandler("GET", "pass", HandlePassInfoListByIds, requireAuthMiddleware)
+	router.AddMethodHandler("GET", "content", HandleContentInfoMultiple)
+	router.AddMethodHandler("GET", "product", HandleProductInfoListByIds)
+	router.AddMethodHandler("GET", "pass", HandlePassInfoListByIds)
 
 	contentRouter := apirouter.NewRouter()
-	contentRouter.AddMiddleware(requireAuthMiddleware)
 	contentRouter.AddMethodHandlerWildcard("GET", "contentId", HandleContentInfo)
 	router.AddRouter("content", contentRouter)
 
@@ -48,24 +47,24 @@ func createLambdaRouterV1() *apirouter.Router {
 
 	productRouter := apirouter.NewRouter()
 	productRouter.AddMiddleware(requireAuthMiddleware)
-	productRouter.AddMethodHandler("GET", "accesses", HandleAccessProductInfoList)
+	productRouter.AddMethodHandler("GET", "accesses", HandleAccessProductInfoList, requireAuthMiddleware)
 	productRouter.AddMethodHandlerWildcard("GET", "productId", HandleProductInfo)
 	router.AddRouter("product", productRouter)
 
 	specificProductRouter := apirouter.NewRouter()
 	specificProductRouter.AddMethodHandler("GET", "icon", HandleProductIconDownload)
-	specificProductRouter.AddMethodHandler("GET", "access", HandleAccessProductInfo)
+	specificProductRouter.AddMethodHandler("GET", "access", HandleAccessProductInfo, requireAuthMiddleware)
 	productRouter.AddRouterWildcard("productId", specificProductRouter)
 
 	passRouter := apirouter.NewRouter()
-	passRouter.AddMiddleware(requireAuthMiddleware)
-	passRouter.AddMethodHandler("GET", "accesses", HandleAccessPassInfoList)
+	passRouter.AddMethodHandler("GET", "list", HandlePassInfoList)
+	passRouter.AddMethodHandler("GET", "accesses", HandleAccessPassInfoList, requireAuthMiddleware)
 	passRouter.AddMethodHandlerWildcard("GET", "passId", HandlePassInfo)
 	router.AddRouter("pass", passRouter)
 
 	specificPassRouter := apirouter.NewRouter()
 	specificPassRouter.AddMethodHandler("GET", "icon", HandlePassIconDownload)
-	specificPassRouter.AddMethodHandler("GET", "access", HandleAccessPassInfo)
+	specificPassRouter.AddMethodHandler("GET", "access", HandleAccessPassInfo, requireAuthMiddleware)
 	passRouter.AddRouterWildcard("passId", specificPassRouter)
 
 	ticketRouter := apirouter.NewRouter()
