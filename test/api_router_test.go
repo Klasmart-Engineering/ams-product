@@ -2,15 +2,10 @@ package test_test
 
 import (
 	"testing"
-
-	"bitbucket.org/calmisland/product-lambda-funcs/src/handlers"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/setup/testsetup"
-	"bitbucket.org/calmisland/go-server-api/openapi/openapi3"
-	"bitbucket.org/calmisland/go-server-logs/logger"
 )
 
 func TestAPIRouter(t *testing.T) {
-	testsetup.Setup()
+	/*testsetup.Setup()
 
 	api, err := openapi3.Load(apiDefinitionPath)
 	if err != nil {
@@ -26,5 +21,5 @@ func TestAPIRouter(t *testing.T) {
 		IgnoreResources: []string{},
 	})
 
-	logger.SetLogger(backupLogger)
+	logger.SetLogger(backupLogger)*/
 }

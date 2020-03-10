@@ -23,6 +23,34 @@ type passInfoResponseBody struct {
 	Duration   passes.DurationDays `json:"duration"`
 }
 
+func HandlePassInfoList(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+	passVOList, err := globals.PassService.GetPassVOList()
+	if err != nil {
+		return resp.SetServerError(err)
+	}
+
+	passes := make([]*passInfoResponseBody, len(passVOList))
+	for i, passVO := range passVOList {
+		price, err := passVO.Price.ToString(passVO.Currency)
+		if err != nil {
+			return resp.SetServerError(err)
+		}
+		passes[i] = &passInfoResponseBody{
+			PassID:     passVO.PassID,
+			ProductIDs: passVO.Products,
+			Price:      price,
+			Currency:   passVO.Currency,
+			Duration:   passVO.Duration,
+		}
+	}
+
+	response := passInfoListResponseBody{
+		Passes: passes,
+	}
+	resp.SetBody(&response)
+	return nil
+}
+
 // HandlePassInfoListByIds handles pass information list requests.
 func HandlePassInfoListByIds(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	passIDs := req.GetQueryParamMulti("id")

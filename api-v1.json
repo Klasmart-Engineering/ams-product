@@ -712,6 +712,48 @@
                 ]
             }
         },
+        "/pass/list": {
+            "get": {
+                "operationId": "getPassInfoList",
+                "summary": "Get Pass List",
+                "description": "Get all pass informations",
+                "tags": ["pass"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the pass information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "passes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PassInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/pass/accesses": {
             "get": {
                 "operationId": "getAllPassAccesses",
