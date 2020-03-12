@@ -170,6 +170,10 @@
                         "type": "string",
                         "description": "The pass ID."
                     },
+                    "title": {
+                        "type": "string",
+                        "description": "The pass title."
+                    },
                     "productIds": {
                         "type": "array",
                         "description": "The list of product ID that this pass grants access to.",

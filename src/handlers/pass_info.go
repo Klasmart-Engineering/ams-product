@@ -17,6 +17,7 @@ type passInfoListResponseBody struct {
 
 type passInfoResponseBody struct {
 	PassID     string              `json:"passId"`
+	Title      string              `json:"title"`
 	ProductIDs []string            `json:"productIds"`
 	Price      string              `json:"price"`
 	Currency   passes.Currency     `json:"currency"`
@@ -37,6 +38,7 @@ func HandlePassInfoList(ctx context.Context, req *apirequests.Request, resp *api
 		}
 		passes[i] = &passInfoResponseBody{
 			PassID:     passVO.PassID,
+			Title:      passVO.Title,
 			ProductIDs: passVO.Products,
 			Price:      price,
 			Currency:   passVO.Currency,
@@ -71,6 +73,7 @@ func HandlePassInfoListByIds(ctx context.Context, req *apirequests.Request, resp
 		}
 		passes[i] = &passInfoResponseBody{
 			PassID:     passVO.PassID,
+			Title:      passVO.Title,
 			ProductIDs: passVO.Products,
 			Price:      price,
 			Currency:   passVO.Currency,
@@ -104,6 +107,7 @@ func HandlePassInfo(ctx context.Context, req *apirequests.Request, resp *apirequ
 	}
 	response := passInfoResponseBody{
 		PassID:     passVO.PassID,
+		Title:      passVO.Title,
 		ProductIDs: passVO.Products,
 		Price:      price,
 		Currency:   passVO.Currency,
