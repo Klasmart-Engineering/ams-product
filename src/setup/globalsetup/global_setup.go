@@ -6,7 +6,6 @@ import (
 	"bitbucket.org/calmisland/go-server-logs/errorreporter"
 	"bitbucket.org/calmisland/go-server-logs/errorreporter/slackreporter"
 	"bitbucket.org/calmisland/go-server-product/contentservice"
-	"bitbucket.org/calmisland/go-server-product/eventticketregionservice"
 	"bitbucket.org/calmisland/go-server-product/passaccessservice"
 	"bitbucket.org/calmisland/go-server-product/passservice"
 	"bitbucket.org/calmisland/go-server-product/productaccessservice"
@@ -33,7 +32,6 @@ func Setup() {
 	setupPassService()
 	setupPassAccessService()
 	setupContentService()
-	setupEventTicketRegionService()
 
 	setupAccessTokenSystems()
 	setupCORS()
@@ -85,12 +83,6 @@ func setupPassAccessService() {
 
 func setupContentService() {
 	globals.ContentService = &contentservice.StandardContentService{
-		ProductDatabase: globals.ProductDatabase,
-	}
-}
-
-func setupEventTicketRegionService() {
-	globals.EventTicketRegionService = &eventticketregionservice.StandardService{
 		ProductDatabase: globals.ProductDatabase,
 	}
 }
