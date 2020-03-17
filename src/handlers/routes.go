@@ -67,21 +67,5 @@ func createLambdaRouterV1() *apirouter.Router {
 	specificPassRouter.AddMethodHandler("GET", "access", HandleAccessPassInfo, requireAuthMiddleware)
 	passRouter.AddRouterWildcard("passId", specificPassRouter)
 
-	ticketRouter := apirouter.NewRouter()
-	ticketRouter.AddMiddleware(requireAuthMiddleware)
-	router.AddRouter("ticket", ticketRouter)
-
-	specificTicketRouter := apirouter.NewRouter()
-	specificTicketRouter.AddMethodHandler("GET", "region", HandleTicketRegion)
-	ticketRouter.AddRouterWildcard("ticketId", specificTicketRouter)
-
-	eventTicketRouter := apirouter.NewRouter()
-	eventTicketRouter.AddMiddleware(requireAuthMiddleware)
-	router.AddRouter("eventTicket", eventTicketRouter)
-
-	specificEventTicketRouter := apirouter.NewRouter()
-	specificEventTicketRouter.AddMethodHandler("GET", "region", HandleEventTicketRegion)
-	eventTicketRouter.AddRouterWildcard("eventId", specificEventTicketRouter)
-
 	return router
 }
