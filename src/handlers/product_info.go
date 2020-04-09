@@ -37,6 +37,33 @@ type productAppStoreInfo struct {
 	StoreURL string `json:"storeUrl"`
 }
 
+// HandleProductInfoList handles product information list requests.
+func HandleProductInfoList(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+	productVOList, err := globals.ProductService.GetProductVOList()
+	if err != nil {
+		return resp.SetServerError(err)
+	}
+
+	products := make([]*productInfoResponseBody, len(productVOList))
+	for i, productVO := range productVOList {
+		appInfo := convertProductAppInfoFromService(productVO.AppInfo)
+		products[i] = &productInfoResponseBody{
+			ProductID:   productVO.ProductID,
+			Title:       productVO.Title,
+			Type:        productVO.Type,
+			Description: productVO.Description,
+			AppInfo:     appInfo,
+			UpdatedDate: productVO.UpdatedDate,
+		}
+	}
+
+	response := productInfoListResponseBody{
+		Products: products,
+	}
+	resp.SetBody(&response)
+	return nil
+}
+
 // HandleProductInfoListByIds handles product information list requests.
 func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	productIDs := req.GetQueryParamMulti("id")
