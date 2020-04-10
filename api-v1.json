@@ -493,6 +493,48 @@
                 ]
             }
         },
+        "/product/list": {
+            "get": {
+                "operationId": "getProductInfoList",
+                "summary": "Get Product List",
+                "description": "Get all product informations",
+                "tags": ["product"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the product information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "passes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProductInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/product/accesses": {
             "get": {
                 "operationId": "getAllProductAccesses",

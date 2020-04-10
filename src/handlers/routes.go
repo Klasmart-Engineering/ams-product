@@ -46,7 +46,7 @@ func createLambdaRouterV1() *apirouter.Router {
 	contentRouter.AddRouterWildcard("contentId", specificContentRouter)
 
 	productRouter := apirouter.NewRouter()
-	productRouter.AddMiddleware(requireAuthMiddleware)
+	productRouter.AddMethodHandler("GET", "list", HandleProductInfoList)
 	productRouter.AddMethodHandler("GET", "accesses", HandleAccessProductInfoList, requireAuthMiddleware)
 	productRouter.AddMethodHandlerWildcard("GET", "productId", HandleProductInfo)
 	router.AddRouter("product", productRouter)
