@@ -48,3 +48,15 @@ func GetPassIconURL(passID string) (string, error) {
 		Expires: urlExpireTime,
 	})
 }
+
+// GetKlpPassIconURL returns the URL for a specific kidsloop pass icon.
+func GetKlpPassIconURL(passID string) (string, error) {
+	passID = url.PathEscape(passID)
+	iconFileName := fmt.Sprintf("%s.png", passID)
+	iconURL := urlutils.JoinURL(productConfig.DownloadBaseURL, "icons/klp_passes", iconFileName)
+	urlExpireTime := time.Now().Add(iconDownloadURLDuration)
+
+	return signURL(iconURL, urlsign.SignOptions{
+		Expires: urlExpireTime,
+	})
+}

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"bitbucket.org/calmisland/go-server-product/contentservice"
+	"bitbucket.org/calmisland/go-server-product/klppassservice"
 	"bitbucket.org/calmisland/go-server-product/passaccessservice"
 	"bitbucket.org/calmisland/go-server-product/passservice"
 	"bitbucket.org/calmisland/go-server-product/productaccessservice"
@@ -37,6 +38,9 @@ var (
 
 	// ContentService ContentService
 	ContentService contentservice.IContentService
+
+	// KlpPassService KlpPassService
+	KlpPassService klppassservice.IKlpPassService
 )
 
 // Verify verifies if all variables have been properly set.
@@ -55,6 +59,8 @@ func Verify() {
 		panic(errors.New("The pass access service has not been set"))
 	} else if ContentService == nil {
 		panic(errors.New("The content service has not been set"))
+	} else if KlpPassService == nil {
+		panic(errors.New("The kidsloop pass service has not been set"))
 	} else if CORSOptions == nil {
 		panic(errors.New("The CORS definition has not been set"))
 	}

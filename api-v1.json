@@ -196,6 +196,84 @@
                     }
                 }
             },
+            "KlpPassInfo": {
+                "type": "object",
+                "description": "Kidsloop Pass information.",
+                "properties": {
+                    "passId": {
+                        "type": "string",
+                        "description": "The pass ID."
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "The pass title."
+                    },
+                    "price": {
+                        "type": "string",
+                        "description": "The price of a pass, in the related currency."
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "description": "The duration, in days, of a pass."
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "The price currency of a pass."
+                    },
+                    "limits": {
+                        "type": "object",
+                        "properties": {
+                            "teacher": {
+                                "type": "integer"
+                            },
+                            "profile": {
+                                "type": "integer"
+                            },
+                            "classOnlineDuration": {
+                                "type": "integer"
+                            },
+                            "classOnlineProfile": {
+                                "type": "integer"
+                            },
+                            "cloudStorage": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "accesses": {
+                        "type": "object",
+                        "properties": {
+                            "CMS": {
+                                "type": "boolean"
+                            },
+                            "LMS": {
+                                "type": "boolean"
+                            },
+                            "orgManagement": {
+                                "type": "boolean"
+                            },
+                            "profileAdmin": {
+                                "type": "boolean"
+                            },
+                            "parents": {
+                                "type": "boolean"
+                            },
+                            "fullContent": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "customizable": {
+                        "type": "boolean"
+                    },
+                    "createTm": {
+                        "type": "integer"
+                    },
+                    "updateTm": {
+                        "type": "number"
+                    }
+                }
+            },
             "ProductAccessInfo": {
                 "type": "object",
                 "description": "Product access information.",
@@ -955,6 +1033,184 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/PassAccessInfo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/klpPass": {
+            "get": {
+                "operationId": "getKlpPassInfoMultiple",
+                "summary": "Get Multiple Kidsloop Pass Information",
+                "description": "Retrievs information about multiple kidsloop passes.",
+                "tags": ["pass"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The pass ID.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the kidsloop pass information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "passes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/KlpPassInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/klpPass/list": {
+            "get": {
+                "operationId": "getKlpPassInfoList",
+                "summary": "Get Kidsloop Pass List",
+                "description": "Get all kidsloop pass informations",
+                "tags": ["pass"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the kidsloop pass information list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "passes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/KlpPassInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/klpPass/{passId}/icon": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "passId",
+                    "description": "The pass ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getKlpPassIcon",
+                "summary": "Get Kidsloop Pass Icon",
+                "description": "Retrievs the icon for a specific kidsloop pass.",
+                "tags": ["pass"],
+                "responses": {
+                    "307": {
+                        "description": "Successful redirection to the icon."
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/klpPass/{passId}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "passId",
+                    "description": "The pass ID.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getKlpPassInfo",
+                "summary": "Get Kidsloop Pass Information",
+                "description": "Retrievs information about a specific kidsloop pass.",
+                "tags": ["pass"],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned the kidsloop pass information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/KlpPassInfo"
                                 }
                             }
                         }

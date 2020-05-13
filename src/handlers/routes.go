@@ -36,6 +36,7 @@ func createLambdaRouterV1() *apirouter.Router {
 	router.AddMethodHandler("GET", "content", HandleContentInfoMultiple)
 	router.AddMethodHandler("GET", "product", HandleProductInfoListByIds)
 	router.AddMethodHandler("GET", "pass", HandlePassInfoListByIds)
+	router.AddMethodHandler("GET", "klpPass", HandleKlpPassInfoListByIds)
 
 	contentRouter := apirouter.NewRouter()
 	contentRouter.AddMethodHandlerWildcard("GET", "contentId", HandleContentInfo)
@@ -66,6 +67,15 @@ func createLambdaRouterV1() *apirouter.Router {
 	specificPassRouter.AddMethodHandler("GET", "icon", HandlePassIconDownload)
 	specificPassRouter.AddMethodHandler("GET", "access", HandleAccessPassInfo, requireAuthMiddleware)
 	passRouter.AddRouterWildcard("passId", specificPassRouter)
+
+	klpPassRouter := apirouter.NewRouter()
+	klpPassRouter.AddMethodHandler("GET", "list", HandleKlpPassInfoList)
+	klpPassRouter.AddMethodHandlerWildcard("GET", "passId", HandleKlpPassInfo)
+	router.AddRouter("klpPass", klpPassRouter)
+
+	specificKlpPassRouter := apirouter.NewRouter()
+	specificKlpPassRouter.AddMethodHandler("GET", "icon", HandleKlpPassIconDownload)
+	klpPassRouter.AddRouterWildcard("passId", specificKlpPassRouter)
 
 	return router
 }
