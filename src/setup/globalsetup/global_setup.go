@@ -1,6 +1,8 @@
 package globalsetup
 
 import (
+	"errors"
+
 	"bitbucket.org/calmisland/go-server-aws/awsdynamodb"
 	"bitbucket.org/calmisland/go-server-configs/configs"
 	"bitbucket.org/calmisland/go-server-logs/errorreporter"
@@ -96,11 +98,16 @@ func setupKlpPassService() {
 }
 
 func setupAccessTokenSystems() {
+	var err error
 	var validatorConfig accesstokens.ValidatorConfig
-	err := configs.LoadConfig("access_tokens", &validatorConfig, true)
-	if err != nil {
-		panic(err)
+
+	bPublicKey := configs.LoadBinary("account.pub")
+	if bPublicKey == nil {
+		panic(errors.New("the account.pub file is mandatory"))
 	}
+
+	validatorConfig.PublicKey = string(bPublicKey)
+
 	globals.AccessTokenValidator, err = accesstokens.NewValidator(validatorConfig)
 	if err != nil {
 		panic(err)
