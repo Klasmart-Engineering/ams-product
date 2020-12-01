@@ -16,38 +16,52 @@ type passInfoListResponseBody struct {
 }
 
 type passInfoResponseBody struct {
-	PassID     string              `json:"passId"`
-	Title      string              `json:"title"`
-	ProductIDs []string            `json:"productIds"`
-	Price      string              `json:"price"`
-	Currency   passes.Currency     `json:"currency"`
-	Duration   passes.DurationDays `json:"duration"`
+	PassID     string                      `json:"passId"`
+	Title      string                      `json:"title"`
+	ProductIDs []string                    `json:"productIds"`
+	Price      string                      `json:"price"`
+	Currency   passes.Currency             `json:"currency"`
+	Duration   passes.DurationDays         `json:"duration"`
+	DurationMS passes.DurationMilliseconds `json:"durationMS"`
 }
 
+// HandlePassInfoList is the function has /v1/pass/list
 func HandlePassInfoList(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
 	passVOList, err := globals.PassService.GetPassVOList()
+
 	if err != nil {
 		return resp.SetServerError(err)
 	}
 
-	passes := make([]*passInfoResponseBody, len(passVOList))
+	passesObj := make([]*passInfoResponseBody, len(passVOList))
 	for i, passVO := range passVOList {
 		price, err := passVO.Price.ToString(passVO.Currency)
 		if err != nil {
 			return resp.SetServerError(err)
 		}
-		passes[i] = &passInfoResponseBody{
+
+		durationMS := passVO.DurationMS
+		duration := passVO.Duration
+
+		if durationMS == 0 {
+			durationMS = passes.DurationMilliseconds(duration) * 86400000
+		} else if duration == 0 {
+			duration = passes.DurationDays(durationMS / 86400000)
+		}
+
+		passesObj[i] = &passInfoResponseBody{
 			PassID:     passVO.PassID,
 			Title:      passVO.Title,
 			ProductIDs: passVO.Products,
 			Price:      price,
 			Currency:   passVO.Currency,
-			Duration:   passVO.Duration,
+			Duration:   duration,
+			DurationMS: durationMS,
 		}
 	}
 
 	response := passInfoListResponseBody{
-		Passes: passes,
+		Passes: passesObj,
 	}
 	resp.SetBody(&response)
 	return nil
@@ -65,24 +79,35 @@ func HandlePassInfoListByIds(ctx context.Context, req *apirequests.Request, resp
 		return resp.SetServerError(err)
 	}
 
-	passes := make([]*passInfoResponseBody, len(passVOList))
+	passesObj := make([]*passInfoResponseBody, len(passVOList))
 	for i, passVO := range passVOList {
 		price, err := passVO.Price.ToString(passVO.Currency)
 		if err != nil {
 			return resp.SetServerError(err)
 		}
-		passes[i] = &passInfoResponseBody{
+
+		durationMS := passVO.DurationMS
+		duration := passVO.Duration
+
+		if durationMS == 0 {
+			durationMS = passes.DurationMilliseconds(duration) * 86400000
+		} else if duration == 0 {
+			duration = passes.DurationDays(durationMS / 86400000)
+		}
+
+		passesObj[i] = &passInfoResponseBody{
 			PassID:     passVO.PassID,
 			Title:      passVO.Title,
 			ProductIDs: passVO.Products,
 			Price:      price,
 			Currency:   passVO.Currency,
-			Duration:   passVO.Duration,
+			Duration:   duration,
+			DurationMS: durationMS,
 		}
 	}
 
 	response := passInfoListResponseBody{
-		Passes: passes,
+		Passes: passesObj,
 	}
 	resp.SetBody(&response)
 	return nil
@@ -105,14 +130,26 @@ func HandlePassInfo(ctx context.Context, req *apirequests.Request, resp *apirequ
 	if err != nil {
 		return resp.SetServerError(err)
 	}
+
+	durationMS := passVO.DurationMS
+	duration := passVO.Duration
+
+	if durationMS == 0 {
+		durationMS = passes.DurationMilliseconds(duration) * 86400000
+	} else if duration == 0 {
+		duration = passes.DurationDays(durationMS / 86400000)
+	}
+
 	response := passInfoResponseBody{
 		PassID:     passVO.PassID,
 		Title:      passVO.Title,
 		ProductIDs: passVO.Products,
 		Price:      price,
 		Currency:   passVO.Currency,
-		Duration:   passVO.Duration,
+		Duration:   duration,
+		DurationMS: durationMS,
 	}
+
 	resp.SetBody(&response)
 	return nil
 }
