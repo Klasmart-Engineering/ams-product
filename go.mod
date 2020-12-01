@@ -9,7 +9,7 @@ require (
 	bitbucket.org/calmisland/go-server-configs v1.1.3
 	bitbucket.org/calmisland/go-server-info v1.1.0 // indirect
 	bitbucket.org/calmisland/go-server-logs v1.2.1
-	bitbucket.org/calmisland/go-server-product v1.16.1
+	bitbucket.org/calmisland/go-server-product v1.16.3
 	bitbucket.org/calmisland/go-server-reference-data v1.2.0
 	bitbucket.org/calmisland/go-server-requests v1.20.1
 	bitbucket.org/calmisland/go-server-utils v1.9.0
