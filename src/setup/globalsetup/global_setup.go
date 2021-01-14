@@ -45,7 +45,7 @@ func Setup() {
 
 func setupProductDatabase() {
 	var productDatabaseConfig awsdynamodb.ClientConfig
-	err := configs.LoadConfig("product_database_dynamodb", &productDatabaseConfig, true)
+	err := configs.ReadEnvConfig(&productDatabaseConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -117,6 +117,7 @@ func setupAccessTokenSystems() {
 func setupCORS() {
 	var corsConfig apirouter.CORSOptions
 	err := configs.LoadConfig("cross_origin_resource_sharing", &corsConfig, true)
+
 	if err != nil {
 		panic(err)
 	}
@@ -126,7 +127,7 @@ func setupCORS() {
 
 func setupSlackReporter() {
 	var slackReporterConfig slackreporter.Config
-	err := configs.LoadConfig("error_reporter_slack", &slackReporterConfig, false)
+	err := configs.ReadEnvConfig(&slackReporterConfig)
 	if err != nil {
 		panic(err)
 	}
