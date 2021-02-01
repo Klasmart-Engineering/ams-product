@@ -5,16 +5,15 @@ FROM alpine:latest
 WORKDIR /usr/src/app
 
 # Copy the app
-COPY ./bin/main .
+COPY ./bin/handler bin/
 COPY configs configs
 COPY keys keys
 
 # Add missing certificates
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
-RUN chmod 755 ./bin/main
 
 # Bind the app port
 EXPOSE 8044
 
 # Start the app
-ENTRYPOINT [ "./main" ]
+ENTRYPOINT [ "bin/handler" ]
