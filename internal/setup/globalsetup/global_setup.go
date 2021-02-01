@@ -2,6 +2,8 @@ package globalsetup
 
 import (
 	"errors"
+	"fmt"
+	"os"
 
 	"bitbucket.org/calmisland/go-server-aws/awsdynamodb"
 	"bitbucket.org/calmisland/go-server-configs/configs"
@@ -16,16 +18,18 @@ import (
 	"bitbucket.org/calmisland/go-server-product/productservice"
 	"bitbucket.org/calmisland/go-server-requests/apirouter"
 	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
+	v1Services "bitbucket.org/calmisland/product-lambda-funcs/internal/services/v1"
+	"github.com/getsentry/sentry-go"
 )
 
 // Setup Setup
 func Setup() {
+	setupSentry()
 	// Setup the Slack reporter first
 	setupSlackReporter()
 
-	if err := services.InitializeFromConfigs(); err != nil {
+	if err := v1Services.InitializeFromConfigs(); err != nil {
 		panic(err)
 	}
 
@@ -41,6 +45,17 @@ func Setup() {
 	setupCORS()
 
 	globals.Verify()
+}
+
+func setupSentry() {
+	var env string = fmt.Sprintf("%s", os.Getenv("SERVER_STAGE"))
+
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:         "https://619f73d7336e479ba6c1659cd256b4f8@o412774.ingest.sentry.io/5614058",
+		Environment: env,
+	}); err != nil {
+		fmt.Printf("Sentry initialization failed: %v\n", err)
+	}
 }
 
 func setupProductDatabase() {

@@ -1,14 +1,16 @@
-package handlers
+package v1
 
 import (
-	"context"
+	"net/http"
 
 	"bitbucket.org/calmisland/go-server-product/passes"
 	"bitbucket.org/calmisland/go-server-product/productid"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/helpers"
+	v1Services "bitbucket.org/calmisland/product-lambda-funcs/internal/services/v1"
+	"github.com/labstack/echo/v4"
 )
 
 type passInfoListResponseBody struct {
@@ -26,18 +28,18 @@ type passInfoResponseBody struct {
 }
 
 // HandlePassInfoList is the function has /v1/pass/list
-func HandlePassInfoList(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+func HandlePassInfoList(c echo.Context) error {
 	passVOList, err := globals.PassService.GetPassVOList()
 
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
 	passesObj := make([]*passInfoResponseBody, len(passVOList))
 	for i, passVO := range passVOList {
 		price, err := passVO.Price.ToString(passVO.Currency)
 		if err != nil {
-			return resp.SetServerError(err)
+			return helpers.HandleInternalError(c, err)
 		}
 
 		durationMS := passVO.DurationMS
@@ -63,27 +65,27 @@ func HandlePassInfoList(ctx context.Context, req *apirequests.Request, resp *api
 	response := passInfoListResponseBody{
 		Passes: passesObj,
 	}
-	resp.SetBody(&response)
-	return nil
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandlePassInfoListByIds handles pass information list requests.
-func HandlePassInfoListByIds(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	passIDs := req.GetQueryParamMulti("id")
-	if len(passIDs) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+func HandlePassInfoListByIds(c echo.Context) error {
+	passIDs, err := helpers.GetArrayQueryParams(c, "id")
+
+	if len(passIDs) == 0 || err != nil {
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	passVOList, err := globals.PassService.GetPassVOListByIds(passIDs)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
 	passesObj := make([]*passInfoResponseBody, len(passVOList))
 	for i, passVO := range passVOList {
 		price, err := passVO.Price.ToString(passVO.Currency)
 		if err != nil {
-			return resp.SetServerError(err)
+			return helpers.HandleInternalError(c, err)
 		}
 
 		durationMS := passVO.DurationMS
@@ -109,26 +111,25 @@ func HandlePassInfoListByIds(ctx context.Context, req *apirequests.Request, resp
 	response := passInfoListResponseBody{
 		Passes: passesObj,
 	}
-	resp.SetBody(&response)
-	return nil
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandlePassInfo handles pass information requests.
-func HandlePassInfo(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	passID, _ := req.GetPathParam("passId")
+func HandlePassInfo(c echo.Context) error {
+	passID := c.Param("passId")
 	if len(passID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters.WithField("passId"))
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters.WithField("passId"))
 	}
 
 	passVO, err := globals.PassService.GetPassVOByPassID(passID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	} else if passVO == nil {
-		return resp.SetClientError(apierrors.ErrorItemNotFound)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorItemNotFound)
 	}
 	price, err := passVO.Price.ToString(passVO.Currency)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
 	durationMS := passVO.DurationMS
@@ -150,27 +151,25 @@ func HandlePassInfo(ctx context.Context, req *apirequests.Request, resp *apirequ
 		DurationMS: durationMS,
 	}
 
-	resp.SetBody(&response)
-	return nil
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandlePassIconDownload handles downloading pass icons.
-func HandlePassIconDownload(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	passID, _ := req.GetPathParam("passId")
+func HandlePassIconDownload(c echo.Context) error {
+	passID := c.Param("passId")
 	if len(passID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	passID, err := productid.GetPassIDShortPrefix(passID)
 	if err != nil {
-		return resp.SetClientError(apierrors.ErrorInputInvalidFormat)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInputInvalidFormat)
 	}
 
-	fileURL, err := services.GetPassIconURL(passID)
+	fileURL, err := v1Services.GetPassIconURL(passID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
-	resp.Redirect(fileURL)
-	return nil
+	return c.Redirect(http.StatusTemporaryRedirect, fileURL)
 }

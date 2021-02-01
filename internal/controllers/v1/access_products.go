@@ -1,12 +1,17 @@
-package handlers
+package v1
 
 import (
-	"context"
+	"net/http"
 
+	"bitbucket.org/calmisland/go-server-auth/authmiddlewares"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/helpers"
+	"github.com/getsentry/sentry-go"
+	sentryecho "github.com/getsentry/sentry-go/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type accessProductInfoListResponseBody struct {
@@ -20,11 +25,20 @@ type accessProductInfo struct {
 }
 
 // HandleAccessProductInfoList handles product access info list requests.
-func HandleAccessProductInfoList(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	accountID := req.Session.Data.AccountID
+func HandleAccessProductInfoList(c echo.Context) error {
+	cc := c.(*authmiddlewares.AuthContext)
+	accountID := cc.Session.Data.AccountID
+
+	hub := sentryecho.GetHubFromContext(c)
+	hub.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetUser(sentry.User{
+			ID: accountID,
+		})
+	})
+
 	productAccessVOList, err := globals.ProductAccessService.GetProductAccessVOListByAccountID(accountID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 	accessProductItems := make([]*accessProductInfo, len(productAccessVOList))
 	for i, productAccessVO := range productAccessVOList {
@@ -34,33 +48,41 @@ func HandleAccessProductInfoList(_ context.Context, req *apirequests.Request, re
 			ExpirationDate: productAccessVO.ExpirationDate,
 		}
 	}
-	resp.SetBody(&accessProductInfoListResponseBody{
+
+	return c.JSON(http.StatusOK, &accessProductInfoListResponseBody{
 		Products: accessProductItems,
 	})
-	return nil
 }
 
 // HandleAccessProductInfo handles product access info requests.
-func HandleAccessProductInfo(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	productID, _ := req.GetPathParam("productId")
+func HandleAccessProductInfo(c echo.Context) error {
+	cc := c.(*authmiddlewares.AuthContext)
+	accountID := cc.Session.Data.AccountID
+
+	hub := sentryecho.GetHubFromContext(c)
+	hub.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetUser(sentry.User{
+			ID: accountID,
+		})
+	})
+
+	productID := c.Param("productId")
 	if len(productID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
-	accountID := req.Session.Data.AccountID
 	productAccessVO, err := globals.ProductAccessService.GetProductAccessVOByAccountIDProductID(accountID, productID)
 	if err != nil {
 		return err
 	} else if productAccessVO == nil {
-		resp.SetBody(&accessProductInfo{
+		return c.JSON(http.StatusOK, &accessProductInfo{
 			Access:    false,
 			ProductID: productID,
 		})
 	} else {
-		resp.SetBody(&accessProductInfo{
+		return c.JSON(http.StatusOK, &accessProductInfo{
 			Access:         true,
 			ProductID:      productAccessVO.ProductID,
 			ExpirationDate: productAccessVO.ExpirationDate,
 		})
 	}
-	return nil
 }

@@ -10,8 +10,7 @@ import (
 	"bitbucket.org/calmisland/go-server-requests/apirouter"
 	"bitbucket.org/calmisland/go-server-requests/sessions"
 	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens/accesstokensmock"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
 	"github.com/calmisland/go-testify/mock"
 )
 

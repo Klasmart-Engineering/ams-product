@@ -1,7 +1,8 @@
-package handlers
+package v1
 
 import (
-	"context"
+	"fmt"
+	"net/http"
 
 	"bitbucket.org/calmisland/go-server-product/contentservice"
 	"bitbucket.org/calmisland/go-server-product/productid"
@@ -9,8 +10,10 @@ import (
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/helpers"
+	v1Services "bitbucket.org/calmisland/product-lambda-funcs/internal/services/v1"
+	"github.com/labstack/echo/v4"
 )
 
 type contentInfoListResponseBody struct {
@@ -33,17 +36,18 @@ type kidsAppContentInfo struct {
 }
 
 // HandleContentInfo handles content information requests.
-func HandleContentInfo(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	contentID, _ := req.GetPathParam("contentId")
+func HandleContentInfo(c echo.Context) error {
+	contentID := c.Param("contentId")
+	fmt.Println(contentID)
 	if len(contentID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	contentVO, err := globals.ContentService.GetContentVOByContentID(contentID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	} else if contentVO == nil {
-		return resp.SetClientError(apierrors.ErrorItemNotFound)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorItemNotFound)
 	}
 
 	kidsAppInfo := convertContentKidsAppInfoFromService(contentVO.KidsAppInfo)
@@ -56,20 +60,21 @@ func HandleContentInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		KidsAppInfo: kidsAppInfo,
 		UpdatedDate: contentVO.UpdatedDate,
 	}
-	resp.SetBody(&response)
-	return nil
+
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandleContentInfoMultiple handles multiple content informations requests.
-func HandleContentInfoMultiple(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	contentIDs := req.GetQueryParamMulti("id")
-	if len(contentIDs) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+func HandleContentInfoMultiple(c echo.Context) error {
+	contentIDs, err := helpers.GetArrayQueryParams(c, "id")
+
+	if err != nil || len(contentIDs) == 0 {
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	contentVOList, err := globals.ContentService.GetContentVOListByIds(contentIDs)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
 	contents := make([]*contentInfoResponseBody, len(contentVOList))
@@ -89,29 +94,28 @@ func HandleContentInfoMultiple(ctx context.Context, req *apirequests.Request, re
 	response := contentInfoListResponseBody{
 		Contents: contents,
 	}
-	resp.SetBody(&response)
-	return nil
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandleContentIconDownload handles content icon download requests.
-func HandleContentIconDownload(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	contentID, _ := req.GetPathParam("contentId")
+func HandleContentIconDownload(c echo.Context) error {
+	contentID := c.Param("contentId")
+
 	if len(contentID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	contentID, err := productid.GetProductIDShortPrefix(contentID)
 	if err != nil {
-		return resp.SetClientError(apierrors.ErrorInputInvalidFormat)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInputInvalidFormat)
 	}
 
-	fileURL, err := services.GetContentIconURL(contentID)
+	fileURL, err := v1Services.GetContentIconURL(contentID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
-	resp.Redirect(fileURL)
-	return nil
+	return c.Redirect(http.StatusTemporaryRedirect, fileURL)
 }
 
 func convertContentKidsAppInfoFromService(serviceInfo *contentservice.ContentKidsAppInfo) *kidsAppContentInfo {

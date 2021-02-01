@@ -1,12 +1,17 @@
-package handlers
+package v1
 
 import (
-	"context"
+	"net/http"
 
+	"bitbucket.org/calmisland/go-server-auth/authmiddlewares"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/helpers"
+	"github.com/getsentry/sentry-go"
+	sentryecho "github.com/getsentry/sentry-go/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type accessPassInfoListResponseBody struct {
@@ -20,11 +25,19 @@ type accessPassInfo struct {
 }
 
 // HandleAccessPassInfoList handles pass access info list requests.
-func HandleAccessPassInfoList(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	accountID := req.Session.Data.AccountID
+func HandleAccessPassInfoList(c echo.Context) error {
+	cc := c.(*authmiddlewares.AuthContext)
+	accountID := cc.Session.Data.AccountID
+
+	hub := sentryecho.GetHubFromContext(c)
+	hub.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetUser(sentry.User{
+			ID: accountID,
+		})
+	})
 	passAccessVOList, err := globals.PassAccessService.GetPassAccessVOListByAccountID(accountID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 	accessPassItems := make([]*accessPassInfo, len(passAccessVOList))
 	for i, passAccessVO := range passAccessVOList {
@@ -35,33 +48,41 @@ func HandleAccessPassInfoList(_ context.Context, req *apirequests.Request, resp 
 		}
 	}
 
-	resp.SetBody(&accessPassInfoListResponseBody{
+	return c.JSON(http.StatusOK, &accessPassInfoListResponseBody{
 		Passes: accessPassItems,
 	})
-	return nil
 }
 
 // HandleAccessPassInfo handles pass access info requests.
-func HandleAccessPassInfo(_ context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	passID, _ := req.GetPathParam("passId")
+func HandleAccessPassInfo(c echo.Context) error {
+	cc := c.(*authmiddlewares.AuthContext)
+	accountID := cc.Session.Data.AccountID
+
+	hub := sentryecho.GetHubFromContext(c)
+	hub.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetUser(sentry.User{
+			ID: accountID,
+		})
+	})
+
+	passID := c.Param("passId")
 	if len(passID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
-	accountID := req.Session.Data.AccountID
+
 	passAccessVO, err := globals.PassAccessService.GetPassAccessVOByAccountIDPassID(accountID, passID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	} else if passAccessVO == nil {
-		resp.SetBody(&accessPassInfo{
+		return c.JSON(http.StatusOK, &accessPassInfo{
 			Access: false,
 			PassID: passID,
 		})
 	} else {
-		resp.SetBody(&accessPassInfo{
+		return c.JSON(http.StatusOK, &accessPassInfo{
 			Access:         true,
 			PassID:         passAccessVO.PassID,
 			ExpirationDate: passAccessVO.ExpirationDate,
 		})
 	}
-	return nil
 }

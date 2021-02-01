@@ -1,7 +1,7 @@
-package handlers
+package v1
 
 import (
-	"context"
+	"net/http"
 	"strings"
 
 	"bitbucket.org/calmisland/go-server-product/productid"
@@ -10,8 +10,10 @@ import (
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/globals"
-	"bitbucket.org/calmisland/product-lambda-funcs/src/services"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
+	"bitbucket.org/calmisland/product-lambda-funcs/internal/helpers"
+	v1Services "bitbucket.org/calmisland/product-lambda-funcs/internal/services/v1"
+	"github.com/labstack/echo/v4"
 )
 
 type productInfoListResponseBody struct {
@@ -38,10 +40,10 @@ type productAppStoreInfo struct {
 }
 
 // HandleProductInfoList handles product information list requests.
-func HandleProductInfoList(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
+func HandleProductInfoList(c echo.Context) error {
 	productVOList, err := globals.ProductService.GetProductVOList()
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
 	products := make([]*productInfoResponseBody, len(productVOList))
@@ -60,15 +62,14 @@ func HandleProductInfoList(ctx context.Context, req *apirequests.Request, resp *
 	response := productInfoListResponseBody{
 		Products: products,
 	}
-	resp.SetBody(&response)
-	return nil
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandleProductInfoListByIds handles product information list requests.
-func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	productIDs := req.GetQueryParamMulti("id")
+func HandleProductInfoListByIds(c echo.Context) error {
+	productIDs, err := helpers.GetArrayQueryParams(c, "id")
 	if len(productIDs) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	// NOTE: This is for backwards compatibility, to support comma-separated values in just one parameter
@@ -78,7 +79,7 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 
 	productVOList, err := globals.ProductService.GetProductVOListByIds(productIDs)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
 	products := make([]*productInfoResponseBody, len(productVOList))
@@ -97,22 +98,21 @@ func HandleProductInfoListByIds(ctx context.Context, req *apirequests.Request, r
 	response := productInfoListResponseBody{
 		Products: products,
 	}
-	resp.SetBody(&response)
-	return nil
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandleProductInfo handles product information requests.
-func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	productID, _ := req.GetPathParam("productId")
+func HandleProductInfo(c echo.Context) error {
+	productID := c.Param("productId")
 	if len(productID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	productVO, err := globals.ProductService.GetProductVOByProductID(productID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	} else if productVO == nil {
-		return resp.SetClientError(apierrors.ErrorItemNotFound)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorItemNotFound)
 	}
 
 	appInfo := convertProductAppInfoFromService(productVO.AppInfo)
@@ -124,29 +124,28 @@ func HandleProductInfo(ctx context.Context, req *apirequests.Request, resp *apir
 		AppInfo:     appInfo,
 		UpdatedDate: productVO.UpdatedDate,
 	}
-	resp.SetBody(&response)
-	return nil
+	return c.JSON(http.StatusOK, response)
 }
 
 // HandleProductIconDownload handles downloading product icons.
-func HandleProductIconDownload(ctx context.Context, req *apirequests.Request, resp *apirequests.Response) error {
-	productID, _ := req.GetPathParam("productId")
+func HandleProductIconDownload(c echo.Context) error {
+	productID := c.Param("productId")
+
 	if len(productID) == 0 {
-		return resp.SetClientError(apierrors.ErrorInvalidParameters)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInvalidParameters)
 	}
 
 	productID, err := productid.GetProductIDShortPrefix(productID)
 	if err != nil {
-		return resp.SetClientError(apierrors.ErrorInputInvalidFormat)
+		return apirequests.EchoSetClientError(c, apierrors.ErrorInputInvalidFormat)
 	}
 
-	fileURL, err := services.GetProductIconURL(productID)
+	fileURL, err := v1Services.GetProductIconURL(productID)
 	if err != nil {
-		return resp.SetServerError(err)
+		return helpers.HandleInternalError(c, err)
 	}
 
-	resp.Redirect(fileURL)
-	return nil
+	return c.Redirect(http.StatusTemporaryRedirect, fileURL)
 }
 
 func convertProductAppInfoFromService(serviceInfo *productservice.ProductAppInfo) *productAppInfo {

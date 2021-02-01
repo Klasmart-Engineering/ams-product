@@ -1,4 +1,4 @@
-package services
+package v1
 
 import (
 	"bitbucket.org/calmisland/go-server-configs/configs"
