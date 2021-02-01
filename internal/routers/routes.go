@@ -17,24 +17,9 @@ func SetupRouter() *echo.Echo {
 	authMiddleware := authmiddlewares.EchoAuthMiddleware(globals.AccessTokenValidator, true)
 
 	// Middleware
-	e.Use(middleware.Logger())
+	// e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(sentryecho.New(sentryecho.Options{}))
-
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(ctx echo.Context) error {
-			if hub := sentryecho.GetHubFromContext(ctx); hub != nil {
-				hub.Scope().SetTag("someRandomTag", "maybeYouNeedIt")
-			}
-			return next(ctx)
-		}
-	})
-
-	e.GET("/foo", func(ctx echo.Context) error {
-		// sentryecho handler will catch it just fine. Also, because we attached "someRandomTag"
-		// in the middleware before, it will be sent through as well
-		panic("y tho")
-	})
 
 	v1 := e.Group("/v1")
 
