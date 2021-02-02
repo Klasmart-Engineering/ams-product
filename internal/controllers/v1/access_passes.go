@@ -3,14 +3,11 @@ package v1
 import (
 	"net/http"
 
-	"bitbucket.org/calmisland/go-server-auth/authmiddlewares"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
 	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
 	"bitbucket.org/calmisland/product-lambda-funcs/internal/helpers"
-	"github.com/getsentry/sentry-go"
-	sentryecho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,15 +23,8 @@ type accessPassInfo struct {
 
 // HandleAccessPassInfoList handles pass access info list requests.
 func HandleAccessPassInfoList(c echo.Context) error {
-	cc := c.(*authmiddlewares.AuthContext)
-	accountID := cc.Session.Data.AccountID
+	accountID := helpers.GetAccountID(c)
 
-	hub := sentryecho.GetHubFromContext(c)
-	hub.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetUser(sentry.User{
-			ID: accountID,
-		})
-	})
 	passAccessVOList, err := globals.PassAccessService.GetPassAccessVOListByAccountID(accountID)
 	if err != nil {
 		return helpers.HandleInternalError(c, err)
@@ -55,15 +45,7 @@ func HandleAccessPassInfoList(c echo.Context) error {
 
 // HandleAccessPassInfo handles pass access info requests.
 func HandleAccessPassInfo(c echo.Context) error {
-	cc := c.(*authmiddlewares.AuthContext)
-	accountID := cc.Session.Data.AccountID
-
-	hub := sentryecho.GetHubFromContext(c)
-	hub.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetUser(sentry.User{
-			ID: accountID,
-		})
-	})
+	accountID := helpers.GetAccountID(c)
 
 	passID := c.Param("passId")
 	if len(passID) == 0 {

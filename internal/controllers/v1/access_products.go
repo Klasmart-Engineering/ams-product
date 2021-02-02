@@ -3,14 +3,11 @@ package v1
 import (
 	"net/http"
 
-	"bitbucket.org/calmisland/go-server-auth/authmiddlewares"
 	"bitbucket.org/calmisland/go-server-requests/apierrors"
 	"bitbucket.org/calmisland/go-server-requests/apirequests"
 	"bitbucket.org/calmisland/go-server-utils/timeutils"
 	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
 	"bitbucket.org/calmisland/product-lambda-funcs/internal/helpers"
-	"github.com/getsentry/sentry-go"
-	sentryecho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,15 +23,7 @@ type accessProductInfo struct {
 
 // HandleAccessProductInfoList handles product access info list requests.
 func HandleAccessProductInfoList(c echo.Context) error {
-	cc := c.(*authmiddlewares.AuthContext)
-	accountID := cc.Session.Data.AccountID
-
-	hub := sentryecho.GetHubFromContext(c)
-	hub.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetUser(sentry.User{
-			ID: accountID,
-		})
-	})
+	accountID := helpers.GetAccountID(c)
 
 	productAccessVOList, err := globals.ProductAccessService.GetProductAccessVOListByAccountID(accountID)
 	if err != nil {
@@ -56,15 +45,7 @@ func HandleAccessProductInfoList(c echo.Context) error {
 
 // HandleAccessProductInfo handles product access info requests.
 func HandleAccessProductInfo(c echo.Context) error {
-	cc := c.(*authmiddlewares.AuthContext)
-	accountID := cc.Session.Data.AccountID
-
-	hub := sentryecho.GetHubFromContext(c)
-	hub.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetUser(sentry.User{
-			ID: accountID,
-		})
-	})
+	accountID := helpers.GetAccountID(c)
 
 	productID := c.Param("productId")
 	if len(productID) == 0 {
