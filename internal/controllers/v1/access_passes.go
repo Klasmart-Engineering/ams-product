@@ -17,8 +17,10 @@ type accessPassInfoListResponseBody struct {
 
 type accessPassInfo struct {
 	Access         bool                  `json:"access"`
+	TransactionIds []string              `json:"transactionIds"`
 	PassID         string                `json:"passId"`
 	ExpirationDate timeutils.EpochTimeMS `json:"expirationDate,omitempty"`
+	StartDate      timeutils.EpochTimeMS `json:"startDate"`
 }
 
 // HandleAccessPassInfoList handles pass access info list requests.
@@ -33,8 +35,10 @@ func HandleAccessPassInfoList(c echo.Context) error {
 	for i, passAccessVO := range passAccessVOList {
 		accessPassItems[i] = &accessPassInfo{
 			Access:         true,
+			TransactionIds: passAccessVO.TransactionIDs,
 			PassID:         passAccessVO.PassID,
 			ExpirationDate: passAccessVO.ExpirationDate,
+			StartDate:      passAccessVO.ActivationDate,
 		}
 	}
 
