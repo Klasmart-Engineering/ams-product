@@ -10,14 +10,10 @@ import (
 	"bitbucket.org/calmisland/go-server-product/productaccessservice"
 	"bitbucket.org/calmisland/go-server-product/productdatabase"
 	"bitbucket.org/calmisland/go-server-product/productservice"
-	"bitbucket.org/calmisland/go-server-requests/apirouter"
 	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens"
 )
 
 var (
-	// CORSOptions are the CORS options to use for the API.
-	CORSOptions *apirouter.CORSOptions
-
 	// AccessTokenValidator is the access token validator.
 	AccessTokenValidator accesstokens.Validator
 
@@ -61,7 +57,5 @@ func Verify() {
 		panic(errors.New("The content service has not been set"))
 	} else if KlpPassService == nil {
 		panic(errors.New("The kidsloop pass service has not been set"))
-	} else if CORSOptions == nil {
-		panic(errors.New("The CORS definition has not been set"))
 	}
 }

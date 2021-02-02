@@ -16,7 +16,6 @@ import (
 	"bitbucket.org/calmisland/go-server-product/productaccessservice"
 	"bitbucket.org/calmisland/go-server-product/productdatabase/productdynamodb"
 	"bitbucket.org/calmisland/go-server-product/productservice"
-	"bitbucket.org/calmisland/go-server-requests/apirouter"
 	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens"
 	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
 	v1Services "bitbucket.org/calmisland/product-lambda-funcs/internal/services/v1"
@@ -42,7 +41,6 @@ func Setup() {
 	setupKlpPassService()
 
 	setupAccessTokenSystems()
-	setupCORS()
 
 	globals.Verify()
 }
@@ -127,17 +125,6 @@ func setupAccessTokenSystems() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func setupCORS() {
-	var corsConfig apirouter.CORSOptions
-	err := configs.LoadConfig("cross_origin_resource_sharing", &corsConfig, true)
-
-	if err != nil {
-		panic(err)
-	}
-
-	globals.CORSOptions = &corsConfig
 }
 
 func setupSlackReporter() {

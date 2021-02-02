@@ -7,7 +7,6 @@ import (
 	"bitbucket.org/calmisland/go-server-product/productaccessservice"
 	"bitbucket.org/calmisland/go-server-product/productdatabase/productmemorydb"
 	"bitbucket.org/calmisland/go-server-product/productservice"
-	"bitbucket.org/calmisland/go-server-requests/apirouter"
 	"bitbucket.org/calmisland/go-server-requests/sessions"
 	"bitbucket.org/calmisland/go-server-requests/tokens/accesstokens/accesstokensmock"
 	"bitbucket.org/calmisland/product-lambda-funcs/internal/globals"
@@ -28,7 +27,6 @@ func Setup() {
 	setupPassService()
 	setupPassAccessService()
 	setupContentService()
-	setupCORS()
 
 	setupAccessTokenSystems()
 
@@ -66,30 +64,6 @@ func setupPassAccessService() {
 func setupContentService() {
 	globals.ContentService = &contentservice.StandardContentService{
 		ProductDatabase: globals.ProductDatabase,
-	}
-}
-
-func setupCORS() {
-	globals.CORSOptions = &apirouter.CORSOptions{
-		AllowAnyOrigin: true,
-		AllowedOrigins: []string{},
-		AllowedMethods: []string{
-			"DELETE",
-			"GET",
-			"OPTIONS",
-			"POST",
-			"PUT",
-		},
-		AllowCredentials: false,
-		AllowedHeaders: []string{
-			"Authorization",
-			"Accept",
-			"Accept-Encoding",
-			"Content-Type",
-		},
-		ExposeAllHeaders:    true,
-		ExposedHeaders:      []string{},
-		AccessControlMaxAge: 7200,
 	}
 }
 
