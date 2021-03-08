@@ -1,4 +1,4 @@
 .git
 .vscode
-!bin/handler
+!bin/main
 bitbucket-pipelines.yml

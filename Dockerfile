@@ -5,7 +5,7 @@ FROM alpine:latest
 WORKDIR /usr/src/app
 
 # Copy the app
-COPY ./bin/handler bin/
+COPY ./bin/main .
 COPY configs configs
 COPY keys keys
 
@@ -16,4 +16,4 @@ RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 EXPOSE 8044
 
 # Start the app
-ENTRYPOINT [ "bin/handler" ]
+ENTRYPOINT [ "./main" ]
