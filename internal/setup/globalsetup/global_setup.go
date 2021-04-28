@@ -1,9 +1,7 @@
 package globalsetup
 
 import (
-	"errors"
 	"fmt"
-	"os"
 
 	"bitbucket.org/calmisland/go-server-aws/awsdynamodb"
 	"bitbucket.org/calmisland/go-server-configs/configs"
@@ -46,12 +44,7 @@ func Setup() {
 }
 
 func setupSentry() {
-	var env string = fmt.Sprintf("%s", os.Getenv("SERVER_STAGE"))
-
-	if err := sentry.Init(sentry.ClientOptions{
-		Dsn:         "https://619f73d7336e479ba6c1659cd256b4f8@o412774.ingest.sentry.io/5614058",
-		Environment: env,
-	}); err != nil {
+	if err := sentry.Init(sentry.ClientOptions{}); err != nil {
 		fmt.Printf("Sentry initialization failed: %v\n", err)
 	}
 }
@@ -113,13 +106,10 @@ func setupKlpPassService() {
 func setupAccessTokenSystems() {
 	var err error
 	var validatorConfig accesstokens.ValidatorConfig
-
-	bPublicKey := configs.LoadBinary("account.pub")
-	if bPublicKey == nil {
-		panic(errors.New("the account.pub file is mandatory"))
+	err = configs.ReadEnvConfig(&validatorConfig)
+	if err != nil {
+		panic(err)
 	}
-
-	validatorConfig.PublicKey = string(bPublicKey)
 
 	globals.AccessTokenValidator, err = accesstokens.NewValidator(validatorConfig)
 	if err != nil {
