@@ -5,8 +5,6 @@ import (
 
 	"bitbucket.org/calmisland/go-server-aws/awsdynamodb"
 	"bitbucket.org/calmisland/go-server-configs/configs"
-	"bitbucket.org/calmisland/go-server-logs/errorreporter"
-	"bitbucket.org/calmisland/go-server-logs/errorreporter/slackreporter"
 	"bitbucket.org/calmisland/go-server-product/contentservice"
 	"bitbucket.org/calmisland/go-server-product/klppassservice"
 	"bitbucket.org/calmisland/go-server-product/passaccessservice"
@@ -24,7 +22,6 @@ import (
 func Setup() {
 	setupSentry()
 	// Setup the Slack reporter first
-	setupSlackReporter()
 
 	if err := v1Services.InitializeFromConfigs(); err != nil {
 		panic(err)
@@ -115,24 +112,4 @@ func setupAccessTokenSystems() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func setupSlackReporter() {
-	var slackReporterConfig slackreporter.Config
-	err := configs.ReadEnvConfig(&slackReporterConfig)
-	if err != nil {
-		panic(err)
-	}
-
-	// Check if there is a configuration for the Slack error reporter
-	if len(slackReporterConfig.HookURL) == 0 {
-		return
-	}
-
-	reporter, err := slackreporter.New(&slackReporterConfig)
-	if err != nil {
-		panic(err)
-	}
-
-	errorreporter.Active = reporter
 }
