@@ -21,9 +21,8 @@ import (
 // Setup Setup
 func Setup() {
 	setupSentry()
-	// Setup the Slack reporter first
 
-	if err := v1Services.InitializeFromConfigs(); err != nil {
+	if err := v1Services.InitializeFromEnvs(); err != nil {
 		panic(err)
 	}
 

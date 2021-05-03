@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # Copy the app
 COPY ./bin/main .
-COPY configs configs
+# COPY configs configs
 COPY keys keys
 
 # Add missing certificates
